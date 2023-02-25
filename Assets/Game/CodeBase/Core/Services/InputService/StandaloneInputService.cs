@@ -13,6 +13,7 @@ namespace Game.CodeBase.Core.Services.InputService
         
         public event Action ToggleInventory;
         public event Action<Vector2> OnScreenClick;
+        public event Action OnAttack;
 
         private bool _isEnabled;
        
@@ -35,6 +36,9 @@ namespace Game.CodeBase.Core.Services.InputService
 
             if (Input.GetMouseButtonDown(0)) 
                 OnScreenClick?.Invoke(Input.mousePosition);
+            
+            if (Input.GetKeyDown(KeyCode.E)) 
+                OnAttack?.Invoke();
         }
     }
 }

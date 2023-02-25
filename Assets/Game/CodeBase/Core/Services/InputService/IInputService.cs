@@ -9,6 +9,7 @@ namespace Game.CodeBase.Core.Services.InputService
         Vector3 GetMoveInput();
         event Action ToggleInventory;
         event Action<Vector2> OnScreenClick;
+        event Action OnAttack;
 
         void Enable();
         void Disable();

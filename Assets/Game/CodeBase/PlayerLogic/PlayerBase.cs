@@ -17,8 +17,8 @@ namespace Game.CodeBase.PlayerLogic
         [SerializeField] private PlayerAnimator _playerAnimator;
         private IHealth _playerHealth;
         private IInventory _inventory;
-        public IPlayerProgress Progress;
         private IInputService _inputService;
+        public IPlayerProgress Progress;
         public event Action OnDie;
    
         public void Construct(PlayerMoveSettings moveSettings, HealthSettings playerHealthSettings,
@@ -31,6 +31,7 @@ namespace Game.CodeBase.PlayerLogic
             Progress.HealthData.CurrentHealth = _playerHealth.Current;
             Progress.KillData.EnemiesKilled = 0;
             _inputService = inputService;
+            _inputService.OnAttack += _playerAnimator.SetAttackTrigger;
             _playerHealth.HealthChanged += CheckForDie;
             _playerHealth.HealthChanged += UpdateHealthData;
             _playerTrigger.OnPlayerHit += TakeDamage;
@@ -47,6 +48,7 @@ namespace Game.CodeBase.PlayerLogic
             _playerHealth.HealthChanged -= CheckForDie;
             _playerTrigger.OnPlayerHit -= TakeDamage;
             _playerHealth.HealthChanged -= UpdateHealthData;
+            _inputService.OnAttack -= _playerAnimator.SetAttackTrigger;
         }
 
         private void CheckForDie()

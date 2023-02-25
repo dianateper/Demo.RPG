@@ -1,7 +1,7 @@
 ﻿using System;
+using Game.CodeBase.Common;
 using Game.CodeBase.Inventory;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Game.CodeBase.Level
 {
@@ -11,10 +11,7 @@ namespace Game.CodeBase.Level
         public event Action<WorldItem> OnWorldItemIteract;
         public ItemType ItemType => _itemType;
         
-        public void Interact()
-        {
-            OnWorldItemIteract?.Invoke(this);
-        }
+        public void Interact() => OnWorldItemIteract?.Invoke(this);
 
         public void SetItemType(ItemType itemType) => _itemType = itemType;
     }

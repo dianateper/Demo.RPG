@@ -1,4 +1,4 @@
-﻿namespace Game.CodeBase.Level
+﻿namespace Game.CodeBase.Common
 {
     public interface IInteractable
     {

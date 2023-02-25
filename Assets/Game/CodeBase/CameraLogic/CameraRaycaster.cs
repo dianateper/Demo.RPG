@@ -1,4 +1,5 @@
-﻿using Game.CodeBase.Core.Services.InputService;
+﻿using Game.CodeBase.Common;
+using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Level;
 using UnityEngine;
 
