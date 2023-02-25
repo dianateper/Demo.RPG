@@ -11,10 +11,12 @@ namespace Game.CodeBase.UI.Inventory
         [SerializeField] private Image _itemImage;
         [SerializeField] private TMP_Text _itemCount;
         [SerializeField] private Button _itemDescriptionButton;
+        [SerializeField] private Button _removeItemButton;
         private ItemType _itemType;
 
         public event Action<ItemType> OnItemClick;
-        
+        public event Action<ItemType> OnRemoveItemFromInventoryClick;
+
         public void SetSlot(IInventorySlot slot)
         {
             _itemType = slot.Item.ItemId;
@@ -27,12 +29,15 @@ namespace Game.CodeBase.UI.Inventory
             }
             _itemDescriptionButton.onClick.AddListener(ShowItemDescription);
             _itemDescriptionButton.interactable = true;
+            
+            _removeItemButton.gameObject.SetActive(true);
+            _removeItemButton.interactable = true;
+            _removeItemButton.onClick.AddListener(RemoveItemFromInventory);
         }
-        
-        private void ShowItemDescription()
-        {
-            OnItemClick?.Invoke(_itemType);
-        }
+
+        private void RemoveItemFromInventory() => OnRemoveItemFromInventoryClick?.Invoke(_itemType);
+
+        private void ShowItemDescription() => OnItemClick?.Invoke(_itemType);
 
         public void Clear()
         {
@@ -41,6 +46,8 @@ namespace Game.CodeBase.UI.Inventory
             _itemCount.gameObject.SetActive(false);
             _itemCount.text = string.Empty;
             _itemDescriptionButton.interactable = false;
+            _removeItemButton.gameObject.SetActive(false);
+            _removeItemButton.interactable = false;
         }
     }
 }

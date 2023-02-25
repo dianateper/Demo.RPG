@@ -7,6 +7,7 @@ namespace Game.CodeBase
         public const string EnemyFactoryPath = "Enemy/EnemyFactory";
         public const string LevelDataPath =  "Level/LevelData";
         public const string InventoryFactoryPath = "Inventory/InventoryFactory";
+        public const string WorldItemFactoryPath = "Inventory/WorldItemFactory";
         public const string Level = "Level";
         public const string MessageInventoryIsFull = "Inventory is full";
     }

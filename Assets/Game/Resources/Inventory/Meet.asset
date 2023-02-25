@@ -17,3 +17,5 @@ MonoBehaviour:
     _name: Meet
     _description: 
     _sprite: {fileID: 21300000, guid: c6c531e9c23db0e40b2eba0a8f947629, type: 3}
+  _worldItem: {fileID: 935344237096744508, guid: ed3764d123962ea44b60769ed3fdac00,
+    type: 3}

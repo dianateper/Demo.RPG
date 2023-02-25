@@ -33,6 +33,7 @@ namespace Game.CodeBase.UI.Inventory
             _itemsData = itemsData;
             _inventory = inventory;
             _inventoryWindow.OnItemClick += ShowItemOverviewWindow;
+            _inventoryWindow.OnRemoveFromInventoryClick += Hide;
             _itemOverviewWindow.OnApplyClick += _ => Hide();
             _itemOverviewWindow.OnCloseButtonClick += Hide;
             _itemDescriptionWindow.OnCloseButtonClick += Hide;
@@ -40,6 +41,7 @@ namespace Game.CodeBase.UI.Inventory
 
         private void OnDestroy()
         {
+            _inventoryWindow.OnRemoveFromInventoryClick -= Hide;
             _inventoryWindow.OnItemClick -= ShowItemOverviewWindow;
             _itemOverviewWindow.OnCloseButtonClick -= Hide;
             _itemDescriptionWindow.OnCloseButtonClick -= Hide;

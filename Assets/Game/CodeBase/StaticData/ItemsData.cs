@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Game.CodeBase.Inventory;
+using Game.CodeBase.Level;
 using UnityEngine;
 
 namespace Game.CodeBase.StaticData
@@ -15,5 +16,8 @@ namespace Game.CodeBase.StaticData
             var item = _items.FirstOrDefault(t => t.Item.ItemId == itemType)?.Item;
             return item.Clone();
         } 
+        
+        public WorldItem GetItemPrefab(ItemType itemType) => 
+            _items.FirstOrDefault(t => t.Item.ItemId == itemType)?.WorldItem;
     }
 }

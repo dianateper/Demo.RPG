@@ -1,4 +1,6 @@
-﻿using Game.CodeBase.Core.Services.InputService;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Core.States;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
@@ -21,6 +23,8 @@ namespace Game.CodeBase.Core.ProjectStates
         private LevelData _levelData;
         private ItemsData _itemsData;
         private UIFactory _uiFactory;
+        private WorldItemFactory _worldItemFactory;
+        private List<WorldItem> _items;
 
         public GameLoopState(IStateSwitcher stateSwitcher)
         {
@@ -36,6 +40,7 @@ namespace Game.CodeBase.Core.ProjectStates
             _player.OnDie += EnterGameOverState;
             
             _inputService = ServiceLocator.ResolveService<IInputService>();
+            _worldItemFactory = ServiceLocator.ResolveService<WorldItemFactory>();
             _inputService.ToggleInventory += LoadInventory;
 
             _uiFactory = ServiceLocator.ResolveService<UIFactory>();
@@ -45,6 +50,24 @@ namespace Game.CodeBase.Core.ProjectStates
             _inventoryDataWindow = payload.InventoryDataWindow;
             _inventoryDataWindow.ItemOverviewWindow.OnApplyClick += ApplyItem;
             _inventoryDataWindow.ItemDescriptionWindow.OnAddToInventoryClick += AddItemToInventory;
+            _inventoryDataWindow.InventoryWindow.OnRemoveFromInventoryClick += SpawnWorldItem;
+        }
+
+        public void Exit()
+        {
+            _player.OnDie -= EnterGameOverState;
+            _inputService.ToggleInventory -= LoadInventory;
+            _inventoryDataWindow.ItemOverviewWindow.OnApplyClick -= ApplyItem;
+            _inventoryDataWindow.ItemDescriptionWindow.OnAddToInventoryClick -= AddItemToInventory;
+            _inventoryDataWindow.InventoryWindow.OnRemoveFromInventoryClick -= SpawnWorldItem;
+        }
+
+        private void SpawnWorldItem(ItemType itemType)
+        {
+            _inventory.GetItemFromSlot(itemType);
+            var item = _worldItemFactory.CreateWorldItem(itemType, _player.transform.position);
+            item.OnWorldItemIteract += ShowItemDescription;
+            _items.Add(item);
         }
 
         private void AddItemToInventory(WorldItem worldItem)
@@ -52,6 +75,7 @@ namespace Game.CodeBase.Core.ProjectStates
             if (_inventory.TryAddItemToSlot(_itemsData.GetItem(worldItem.ItemType)))
             {
                 _inventoryDataWindow.Hide();
+                _items.Remove(worldItem);
                 Object.Destroy(worldItem.gameObject);
             }
             else
@@ -72,18 +96,10 @@ namespace Game.CodeBase.Core.ProjectStates
             _player.ApplyInventoryItem(itemType);
         }
 
-        public void Exit()
-        {
-            _player.OnDie -= EnterGameOverState;
-            _inputService.ToggleInventory -= LoadInventory;
-            _inventoryDataWindow.ItemOverviewWindow.OnApplyClick -= ApplyItem;
-            _inventoryDataWindow.ItemDescriptionWindow.OnAddToInventoryClick -= AddItemToInventory;
-        }
-
         private void SetupWorldItems()
         {
-            var items = Object.FindObjectsOfType<WorldItem>();
-            foreach (var item in items)
+            _items = Object.FindObjectsOfType<WorldItem>().ToList();
+            foreach (var item in _items)
                 item.OnWorldItemIteract += ShowItemDescription;
         }
 
