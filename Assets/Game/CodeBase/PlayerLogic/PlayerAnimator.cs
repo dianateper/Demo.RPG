@@ -9,8 +9,8 @@ namespace Game.CodeBase.PlayerLogic
         private static readonly int VelocityX = Animator.StringToHash("VelocityX");
         private static readonly int VelocityY = Animator.StringToHash("VelocityY");
         private static readonly int Attack = Animator.StringToHash("Attack");
-      
-        private void Awake()
+
+        public void Construct()
         {
             _animator = GetComponent<Animator>();
         }
@@ -21,6 +21,9 @@ namespace Game.CodeBase.PlayerLogic
             _animator.SetFloat(VelocityY, velocity.z);
         }
 
-        public void SetAttackTrigger() => _animator.SetTrigger(Attack);
+        public void SetAttackTrigger()
+        {
+            _animator.SetTrigger(Attack);
+        }
     }
 }

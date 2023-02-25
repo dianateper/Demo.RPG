@@ -5,6 +5,7 @@ using Game.CodeBase.Core.Updates;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.PlayerLogic.PlayerData;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game.CodeBase.PlayerLogic
 {
@@ -15,6 +16,8 @@ namespace Game.CodeBase.PlayerLogic
         [SerializeField] private PlayerMove _playerMove;
         [SerializeField] private PlayerTrigger _playerTrigger;
         [SerializeField] private PlayerAnimator _playerAnimator;
+        [SerializeField] private PlayerWeaponRig _playerWeaponRig;
+      
         private IHealth _playerHealth;
         private IInventory _inventory;
         private IInputService _inputService;
@@ -25,6 +28,7 @@ namespace Game.CodeBase.PlayerLogic
             IInputService inputService)
         {
             _playerHealth = GetComponent<IHealth>();
+            _playerAnimator.Construct();
             _playerMove.Construct(moveSettings, _playerAnimator);
             _playerHealth.Current = playerHealthSettings.MaxHealth;
             Progress = new PlayerProgress();
@@ -63,8 +67,11 @@ namespace Game.CodeBase.PlayerLogic
             Destroy(gameObject);
         }
 
-        public void OnUpdate(float deltaTime) => 
+        public void OnUpdate(float deltaTime)
+        {
             _playerMove.Move(_inputService.GetMoveInput());
+            _playerWeaponRig.OnUpdate();
+        }
 
         public void Kill()
         {
