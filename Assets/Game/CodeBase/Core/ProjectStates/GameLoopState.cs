@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Game.CodeBase.CameraLogic;
 using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Core.States;
 using Game.CodeBase.Inventory;
@@ -25,6 +26,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private UIFactory _uiFactory;
         private WorldItemFactory _worldItemFactory;
         private List<WorldItem> _items;
+        private CameraRaycaster _raycaster;
 
         public GameLoopState(IStateSwitcher stateSwitcher)
         {
@@ -38,13 +40,13 @@ namespace Game.CodeBase.Core.ProjectStates
             _levelData = payload.LevelData;
             _itemsData = _levelData.GetItemsData();
             _player.OnDie += EnterGameOverState;
-            
             _inputService = ServiceLocator.ResolveService<IInputService>();
+            _raycaster = new CameraRaycaster(Camera.main, _inputService);
             _worldItemFactory = ServiceLocator.ResolveService<WorldItemFactory>();
             _inputService.ToggleInventory += LoadInventory;
 
             _uiFactory = ServiceLocator.ResolveService<UIFactory>();
-            
+
             SetupWorldItems();
 
             _inventoryDataWindow = payload.InventoryDataWindow;
@@ -55,6 +57,7 @@ namespace Game.CodeBase.Core.ProjectStates
 
         public void Exit()
         {
+            _raycaster.DeInitialize();
             _player.OnDie -= EnterGameOverState;
             _inputService.ToggleInventory -= LoadInventory;
             _inventoryDataWindow.ItemOverviewWindow.OnApplyClick -= ApplyItem;

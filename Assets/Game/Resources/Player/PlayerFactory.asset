@@ -19,6 +19,3 @@ MonoBehaviour:
     _offsetY: 1.75
   _healthSettings:
     _maxHealth: 10
-  _playerSettings:
-    _inventorySlotCapacity: 21
-    _inventoryCapacity: 5

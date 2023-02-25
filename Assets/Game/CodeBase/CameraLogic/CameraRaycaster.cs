@@ -19,6 +19,7 @@ namespace Game.CodeBase.CameraLogic
 
         private void Raycast(Vector2 screenPosition)
         {
+            if (_camera == null) return;
             var ray = _camera.ScreenPointToRay(screenPosition);
             if (Physics.Raycast(ray, out RaycastHit hit))
             {
@@ -28,5 +29,7 @@ namespace Game.CodeBase.CameraLogic
                 }
             }
         }
+
+        public void DeInitialize() => _inputService.OnScreenClick -= Raycast;
     }
 }

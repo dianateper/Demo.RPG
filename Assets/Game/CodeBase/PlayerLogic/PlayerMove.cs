@@ -9,7 +9,8 @@ namespace Game.CodeBase.PlayerLogic
         private float _speed;
         private PlayerAnimator _playerAnimator;
         private Vector3 _previousPosition;
-        
+        private Vector3 _direction;
+
         public void Construct(PlayerMoveSettings moveSettings, PlayerAnimator playerAnimator)
         {
             _rigidbody = GetComponent<Rigidbody>();
@@ -19,10 +20,11 @@ namespace Game.CodeBase.PlayerLogic
 
         public void Move(Vector3 direction)
         {
+            _direction = direction;
             _rigidbody.transform.position += direction * (_speed * Time.deltaTime);
-            var velocity = (_previousPosition - _rigidbody.transform.position) / Time.deltaTime;
+            var velocity = (_previousPosition - transform.position) / Time.deltaTime;
             _playerAnimator.SetVelocity(velocity);
-            _previousPosition = _rigidbody.transform.position;
+            _previousPosition = transform.position;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace Game.CodeBase.Common
             HealthChanged?.Invoke();
         }
 
-        public void Construct(HealthSettings playerHealthSettings)
+        public void Construct(IHealthSettings playerHealthSettings)
         {
             _maxHealth = playerHealthSettings.MaxHealth;
             _currentHealth = _maxHealth;

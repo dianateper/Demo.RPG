@@ -35,6 +35,7 @@ namespace Game.CodeBase.EnemyLogic.States
 
         public void OnUpdate(float deltaTime)
         {
+            if(Target == null) return;
             var targetDistance = Target.position - _agent.transform.position;
             if (targetDistance.sqrMagnitude >= _attackDistance * _attackDistance)
             {

@@ -1,10 +1,11 @@
 using System;
+using Game.CodeBase.PlayerLogic;
 using UnityEngine;
 
-namespace Game.CodeBase.PlayerLogic
+namespace Game.CodeBase.Common
 {
     [Serializable]
-    public class HealthSettings
+    public class HealthSettings : IHealthSettings
     {
         [SerializeField] private float _maxHealth;
 

@@ -4,7 +4,6 @@ using System.Linq;
 using Game.CodeBase.Common;
 using Game.CodeBase.Core.States;
 using Game.CodeBase.EnemyLogic.States;
-using Game.CodeBase.PlayerLogic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -17,14 +16,15 @@ namespace Game.CodeBase.EnemyLogic
         private List<IEnemyState> _enemyStates;
         private List<Transform> _waypoints;
         private EnemyAgentConfiguration _agentConfiguration;
-        private Health _enemyHealth;
+        private IHealth _enemyHealth;
         private IUpdateableState _currentState;
         private Transform _target;
         private NavMeshAgent _agent;
+        private EnemyAnimator _enemyAnimator;
         private float _currentHealth;
         private float _maxHealth;
-        private EnemyAnimator _enemyAnimator;
-
+        private bool _died;
+        
         public event Action<IEnemy> OnDie;
 
         public void Construct(EnemyAgentConfiguration agentConfiguration,
@@ -33,7 +33,7 @@ namespace Game.CodeBase.EnemyLogic
         {
             _enemyAnimator = GetComponentInChildren<EnemyAnimator>();
             _agent = GetComponent<NavMeshAgent>();
-            _enemyHealth = GetComponent<Health>();
+            _enemyHealth = GetComponent<IHealth>();
             _waypoints = waypoints;
             _agentConfiguration = agentConfiguration;
 
@@ -51,15 +51,7 @@ namespace Game.CodeBase.EnemyLogic
             SwitchState<EnemyIdleState>();
         }
 
-        private void OnDestroy()
-        {
-            _enemyHealth.HealthChanged -= CheckForDie;
-        }
-
-        public void OnUpdate(float deltaTime)
-        {
-            _currentState.OnUpdate(deltaTime);
-        }
+        public void OnUpdate(float deltaTime) => _currentState.OnUpdate(deltaTime);
 
         public void SetTarget(Transform target)
         {
@@ -78,6 +70,7 @@ namespace Game.CodeBase.EnemyLogic
         {
             if (_enemyHealth.Current <= 0)
             {
+                _enemyHealth.HealthChanged -= CheckForDie;
                 SwitchState<EnemyDieState>();
                 OnDie?.Invoke(this);
             }

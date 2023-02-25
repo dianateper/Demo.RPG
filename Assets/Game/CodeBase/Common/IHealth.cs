@@ -1,4 +1,5 @@
 ﻿using System;
+using Game.CodeBase.PlayerLogic;
 
 namespace Game.CodeBase.Common
 {
@@ -7,5 +8,6 @@ namespace Game.CodeBase.Common
         event Action HealthChanged;
         float Current { get; set; }
         void TakeDamage(float damageTaken);
+        void Construct(IHealthSettings playerHealthSettings);
     }
 }

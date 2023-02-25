@@ -44,8 +44,7 @@ namespace Game.CodeBase.PlayerLogic
         private void UpdateHealthData() => 
             Progress.HealthData.CurrentHealth = _playerHealth.Current;
 
-        private void TakeDamage(float damage) => 
-            _playerHealth.TakeDamage(damage);
+        private void TakeDamage(float damage) => _playerHealth.TakeDamage(damage);
 
         private void OnDestroy()
         {

@@ -9,15 +9,16 @@ namespace Game.CodeBase.EnemyLogic.States
         private readonly NavMeshAgent _agent;
         private readonly MonoBehaviour _monoBehaviour;
         private readonly EnemyAnimator _enemyAnimator;
+        private readonly WaitForSeconds _destroyDelay;
         public Transform Target { get; set; }
 
 
-        public EnemyDieState(MonoBehaviour monoBehaviour, EnemyAnimator enemyAnimator,
-            NavMeshAgent agent)
+        public EnemyDieState(MonoBehaviour monoBehaviour, EnemyAnimator enemyAnimator, NavMeshAgent agent)
         {
             _agent = agent;
             _monoBehaviour = monoBehaviour;
             _enemyAnimator = enemyAnimator;
+            _destroyDelay =  new WaitForSeconds(3);
         }
 
         public void Enter()
@@ -28,7 +29,7 @@ namespace Game.CodeBase.EnemyLogic.States
 
         private IEnumerator DestroyEnemy()
         {
-            yield return new WaitForSeconds(3);
+            yield return _destroyDelay;
             Object.Destroy(_agent.gameObject);
         }
 

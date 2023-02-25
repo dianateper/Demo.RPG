@@ -77,7 +77,6 @@ namespace Game.CodeBase.Core.ProjectStates
         {
             _mainCamera = Camera.main;
             _levelInstaller.InitializeCamera(_player.transform, _mainCamera);
-            new CameraRaycaster(_mainCamera, _inputService);
         }
 
         private void CreateUpdateableHandler()
@@ -106,6 +105,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private void CreatePlayer()
         {
             _player = _levelInstaller.CreatePlayer(_inputService, _enemies);
+            _player.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
         }
 
         private void EnterGameLoopState()
