@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Core.States;
 using Game.CodeBase.Inventory;

@@ -17,27 +17,26 @@ namespace Game.CodeBase.UI.Inventory
         
         private ItemsData _itemsData;
         private IInventory _inventory;
-        private IInventoryInput _inventoryInput;
         public InventoryWindow InventoryWindow => _inventoryWindow;
         public ItemOverviewWindow ItemOverviewWindow => _itemOverviewWindow;
         public ItemDescriptionWindow ItemDescriptionWindow => _itemDescriptionWindow;
         
         public override void Initialize()
         {
-            _windows = new List<WindowBase>() { _inventoryWindow, _itemOverviewWindow, _itemDescriptionWindow };
+            _windows = new List<WindowBase> { _inventoryWindow, _itemOverviewWindow, _itemDescriptionWindow };
             base.Initialize();
             _windows.ForEach(w => w.Initialize());
         }
 
         public void Construct(ItemsData itemsData, IInventory inventory, IInventoryInput inventoryInput)
         {
-            _inventoryInput = inventoryInput;
             _itemsData = itemsData;
             _inventory = inventory;
+            _inventoryWindow.Construct(inventoryInput);
             _inventoryWindow.OnItemClick += ShowItemOverviewWindow;
             _inventoryWindow.OnRemoveFromInventoryClick += Hide;
-            _itemOverviewWindow.OnApplyClick += _ => Hide();
-            _itemOverviewWindow.OnCloseButtonClick += Hide;
+            _itemOverviewWindow.OnApplyClick += ClearInventoryWindowAndCloseOverviewWindow;
+            _itemOverviewWindow.OnCloseButtonClick += _itemOverviewWindow.Hide;
             _itemDescriptionWindow.OnCloseButtonClick += Hide;
         }
 
@@ -46,11 +45,18 @@ namespace Game.CodeBase.UI.Inventory
             _inventoryWindow.OnRemoveFromInventoryClick -= Hide;
             _inventoryWindow.OnItemClick -= ShowItemOverviewWindow;
             _itemOverviewWindow.OnCloseButtonClick -= Hide;
-            _itemDescriptionWindow.OnCloseButtonClick -= Hide;
-            _itemOverviewWindow.OnApplyClick -= Hide;
+            _itemDescriptionWindow.OnCloseButtonClick -= _itemOverviewWindow.Hide;
+            _itemOverviewWindow.OnApplyClick -= ClearInventoryWindowAndCloseOverviewWindow;
         }
 
-        public void ShowInventory() => _inventoryWindow.Show(_inventory, _inventoryInput);
+        private void ClearInventoryWindowAndCloseOverviewWindow(ItemType itemType)
+        {
+            _inventoryWindow.Hide();
+            _inventoryWindow.Show();
+            _itemOverviewWindow.Hide();
+        }
+
+        public void ShowInventory() => _inventoryWindow.Show(_inventory);
 
         public void ShowItemDescription(ItemType item, WorldItem worldItem)
         {

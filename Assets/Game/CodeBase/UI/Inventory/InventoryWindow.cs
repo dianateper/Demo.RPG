@@ -16,15 +16,19 @@ namespace Game.CodeBase.UI.Inventory
         
         public event Action<ItemType> OnItemClick;
         public event Action<ItemType> OnRemoveFromInventoryClick;
-        
-        public void Show(IInventory inventory, IInventoryInput inventoryInput)
+
+        public void Construct(IInventoryInput inventoryInput)
         {
             _inventoryInput = inventoryInput;
+        }
+
+        public void Show(IInventory inventory)
+        {
             _activeSlotIndex = 0;
             _inventory = inventory;
-            ActivateFirstSlot();
             RegisterSlotViews();
             SubscribeInput();
+            ActivateFirstSlot();
             Show();
         }
 
@@ -43,6 +47,7 @@ namespace Game.CodeBase.UI.Inventory
 
         private void ActivateRightSlot()
         {
+            if (_inventory.Slots.Count == 0) return;
             _slotViews[_activeSlotIndex].Deactivate();
             if (_activeSlotIndex >= _inventory.Slots.Count - 1) 
                 _activeSlotIndex = -1;
@@ -52,6 +57,7 @@ namespace Game.CodeBase.UI.Inventory
 
         private void ActivateLeftSlot()
         {
+            if (_inventory.Slots.Count == 0) return;
             _slotViews[_activeSlotIndex].Deactivate();
             if (_activeSlotIndex <= 0) 
                 _activeSlotIndex = _inventory.Slots.Count;
@@ -99,7 +105,7 @@ namespace Game.CodeBase.UI.Inventory
             _inventoryInput.OnLeftArrowPress += ActivateLeftSlot;
             _inventoryInput.OnRightArrowPress += ActivateRightSlot;
         }
-        
+
         private void RemoveFromInventory(ItemType itemType) => OnRemoveFromInventoryClick?.Invoke(itemType);
 
         private void ShowItemDetail(ItemType itemId) => OnItemClick?.Invoke(itemId);
