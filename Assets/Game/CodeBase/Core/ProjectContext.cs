@@ -21,9 +21,10 @@ namespace Game.CodeBase.Core
             {
                 new LoadingState(this),
                 new LoadLevelState(this),
-                new GameLoopState(this),
+                new GameLoopState(this, this),
                 new GameOverState(this),
-                new GameWinState(this)
+                new GameWinState(this),
+                new InventoryState(this)
             };
             var context = this as IStateSwitcher;
             context.SwitchState<LoadingState>();

@@ -1,6 +1,6 @@
-﻿using Game.CodeBase.Inventory;
+﻿using System;
+using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
-using Game.CodeBase.PlayerLogic;
 using Game.CodeBase.StaticData;
 using UnityEngine;
 
@@ -17,9 +17,7 @@ namespace Game.CodeBase.UI.Inventory
         public InventoryWindow InventoryWindow => _inventoryWindow;
         public ItemOverviewWindow ItemOverviewWindow => _itemOverviewWindow;
         public ItemDescriptionWindow ItemDescriptionWindow => _itemDescriptionWindow;
-
-        private IPlayerInput _playerInput;
-
+        
         public override void Initialize()
         {
             base.Initialize();
@@ -28,9 +26,8 @@ namespace Game.CodeBase.UI.Inventory
             _itemOverviewWindow.Initialize();
         }
 
-        public void Construct(ItemsData itemsData, IInventory inventory, IPlayerInput playerInput)
+        public void Construct(ItemsData itemsData, IInventory inventory)
         {
-            _playerInput = playerInput;
             _itemsData = itemsData;
             _inventory = inventory;
             _inventoryWindow.OnItemClick += ShowItemOverviewWindow;
@@ -49,10 +46,12 @@ namespace Game.CodeBase.UI.Inventory
             _itemOverviewWindow.OnApplyClick -= Hide;
         }
 
-        public void ShowInventory()
+        public void ShowInventory() => _inventoryWindow.Show(_inventory);
+
+        public void ShowItemDescription(ItemType item, WorldItem worldItem)
         {
-            _playerInput.DisableInput();
-            _inventoryWindow.Show(_inventory);
+            _itemDescriptionWindow.SetWorldItem(worldItem);
+            _itemDescriptionWindow.Show(_itemsData.GetItem(item));
         }
 
         public override void Hide()
@@ -60,21 +59,9 @@ namespace Game.CodeBase.UI.Inventory
             _inventoryWindow.Hide();
             _itemOverviewWindow.Hide();
             _itemDescriptionWindow.Hide();
-            _playerInput.EnableInput();
         }
 
-        public void ShowItemDescription(ItemType item, WorldItem worldItem)
-        {
-            _playerInput.DisableInput();
-            _itemDescriptionWindow.SetWorldItem(worldItem);
-            _itemDescriptionWindow.Show(_itemsData.GetItem(item));
-        }
-
-        private void ShowItemOverviewWindow(ItemType item)
-        {
-            _playerInput.DisableInput();
-            _itemOverviewWindow.Show(_itemsData.GetItem(item));
-        }
+        private void ShowItemOverviewWindow(ItemType item) => _itemOverviewWindow.Show(_itemsData.GetItem(item));
 
         private void Hide(ItemType _) => Hide();
     }

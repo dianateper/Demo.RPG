@@ -11,5 +11,16 @@ namespace Game.CodeBase.Core
         public IInventory Inventory;
         public InventoryDataWindow InventoryDataWindow;
         public LevelData LevelData;
+        public WorldPayloadData WorldPayloadData;
+
+        public PayloadData()
+        {
+            WorldPayloadData = new WorldPayloadData();
+        }
+    }
+
+    public class WorldPayloadData
+    {
+        public WorldItem WordItem;
     }
 }

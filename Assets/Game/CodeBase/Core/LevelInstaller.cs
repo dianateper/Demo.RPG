@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Game.CodeBase.CameraLogic;
-using Game.CodeBase.Core.Services.AssetProvider;
 using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Core.Updates;
 using Game.CodeBase.EnemyLogic;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
 using Game.CodeBase.PlayerLogic;
-using Game.CodeBase.StaticData;
 using Game.CodeBase.UI;
 using Game.CodeBase.UI.Hud;
 using Game.CodeBase.UI.Inventory;
@@ -81,7 +78,7 @@ namespace Game.CodeBase.Core
         {
             var window = _uiFactory.CreateWindow(WindowId.Inventory) as InventoryDataWindow;
             window.Initialize();
-            window.Construct(_levelData.GetItemsData(), inventory, _player);
+            window.Construct(_levelData.GetItemsData(), inventory);
             window.Hide();
             return window;
         }
