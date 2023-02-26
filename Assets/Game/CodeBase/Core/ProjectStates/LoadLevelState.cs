@@ -31,7 +31,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private LevelData _levelData;
         private IAssetProvider _assetProvider;
         private ICameraRaycaster _raycaster;
-        private IInputService _inventoryInput;
+        private IInventoryInput _inventoryInput;
 
         public LoadLevelState(IPayloadDataStateSwitcher stateSwitcher)
         {
@@ -92,7 +92,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private void CreateUI()
         {
             _levelInstaller.CreateHud(_player);
-            _inventoryWindow = _levelInstaller.CreateInventoryDataWindow(_inventory);
+            _inventoryWindow = _levelInstaller.CreateInventoryDataWindow(_inventory, _inventoryInput);
         }
 
         private void RegisterEnemies()

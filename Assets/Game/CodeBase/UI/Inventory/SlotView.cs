@@ -9,6 +9,7 @@ namespace Game.CodeBase.UI.Inventory
     public class SlotView : MonoBehaviour
     {
         [SerializeField] private Image _itemImage;
+        [SerializeField] private Image _activeBackground;
         [SerializeField] private TMP_Text _itemCount;
         [SerializeField] private Button _itemDescriptionButton;
         [SerializeField] private Button _removeItemButton;
@@ -35,10 +36,6 @@ namespace Game.CodeBase.UI.Inventory
             _removeItemButton.onClick.AddListener(RemoveItemFromInventory);
         }
 
-        private void RemoveItemFromInventory() => OnRemoveItemFromInventoryClick?.Invoke(_itemType);
-
-        private void ShowItemDescription() => OnItemClick?.Invoke(_itemType);
-
         public void Clear()
         {
             _itemImage.sprite = null;
@@ -49,5 +46,21 @@ namespace Game.CodeBase.UI.Inventory
             _removeItemButton.gameObject.SetActive(false);
             _removeItemButton.interactable = false;
         }
+
+        public void SetActive()
+        {
+            _itemCount.color = Color.white;
+            _activeBackground.gameObject.SetActive(true);
+        }
+
+        public void Deactivate()
+        {
+            _itemCount.color = Color.black;
+            _activeBackground.gameObject.SetActive(false);
+        }
+
+        private void RemoveItemFromInventory() => OnRemoveItemFromInventoryClick?.Invoke(_itemType);
+
+        private void ShowItemDescription() => OnItemClick?.Invoke(_itemType);
     }
 }

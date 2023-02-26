@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
 using Game.CodeBase.StaticData;
@@ -16,6 +17,7 @@ namespace Game.CodeBase.UI.Inventory
         
         private ItemsData _itemsData;
         private IInventory _inventory;
+        private IInventoryInput _inventoryInput;
         public InventoryWindow InventoryWindow => _inventoryWindow;
         public ItemOverviewWindow ItemOverviewWindow => _itemOverviewWindow;
         public ItemDescriptionWindow ItemDescriptionWindow => _itemDescriptionWindow;
@@ -27,8 +29,9 @@ namespace Game.CodeBase.UI.Inventory
             _windows.ForEach(w => w.Initialize());
         }
 
-        public void Construct(ItemsData itemsData, IInventory inventory)
+        public void Construct(ItemsData itemsData, IInventory inventory, IInventoryInput inventoryInput)
         {
+            _inventoryInput = inventoryInput;
             _itemsData = itemsData;
             _inventory = inventory;
             _inventoryWindow.OnItemClick += ShowItemOverviewWindow;
@@ -47,7 +50,7 @@ namespace Game.CodeBase.UI.Inventory
             _itemOverviewWindow.OnApplyClick -= Hide;
         }
 
-        public void ShowInventory() => _inventoryWindow.Show(_inventory);
+        public void ShowInventory() => _inventoryWindow.Show(_inventory, _inventoryInput);
 
         public void ShowItemDescription(ItemType item, WorldItem worldItem)
         {
