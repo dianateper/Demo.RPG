@@ -15,7 +15,7 @@ MonoBehaviour:
   _item:
     _itemType: 0
     _name: Health
-    _description: 
-    _sprite: {fileID: 21300000, guid: ea9306e1aa95eb8439400efefff9f8db, type: 3}
+    _description: Add 5 points to the health
+    _sprite: {fileID: 21300000, guid: 8925c87a7beb94c4bb8da70f92affebc, type: 3}
   _worldItem: {fileID: 2556097782657413772, guid: c86e03bc61a0bab44a0885c7bb019480,
     type: 3}

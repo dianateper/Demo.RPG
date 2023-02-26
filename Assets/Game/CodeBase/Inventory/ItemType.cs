@@ -3,7 +3,7 @@
     public enum ItemType
     {
         Health,
-        Meet,
-        Bomb
+        Endurance,
+        Coin
     }
 }
