@@ -27,6 +27,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private WorldItemFactory _worldItemFactory;
         private List<WorldItem> _items;
         private CameraRaycaster _raycaster;
+        private IUpdateableHandler _updateableHandler;
 
         public GameLoopState(IStateSwitcher stateSwitcher)
         {

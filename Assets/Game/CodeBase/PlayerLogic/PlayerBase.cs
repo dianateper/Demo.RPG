@@ -5,7 +5,6 @@ using Game.CodeBase.Core.Updates;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.PlayerLogic.PlayerData;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Game.CodeBase.PlayerLogic
 {

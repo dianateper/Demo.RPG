@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Game.CodeBase.Core.Updates;
 using UnityEngine;
 
@@ -11,33 +12,53 @@ namespace Game.CodeBase.Core
         
         private void Update()
         {
-            foreach (var updatable in _updateables)
+            foreach (var updatable in _updateables.ToList())
             {
-                updatable.OnUpdate(Time.deltaTime);
+                updatable?.OnUpdate(Time.deltaTime);
             }
         }
 
         private void LateUpdate()
         {
-            foreach (var lateUpdatable in _lateUpdateables)
+            foreach (var lateUpdatable in _lateUpdateables.ToList())
             {
-                lateUpdatable.OnLateUpdate(Time.deltaTime);
+                lateUpdatable?.OnLateUpdate(Time.deltaTime);
             }
         }
 
-        public void AddUpdatable(IUpdateable updateable) => 
-            _updateables.Add(updateable);
+        public void AddUpdatable(IUpdateable updateable)
+        {
+            var newList = _updateables;
+            newList.Add(updateable);
+            _updateables = newList;
+        }
 
-        public void AddLateUpdatable(ILateUpdateable updateable) => 
-            _lateUpdateables.Add(updateable);
+        public void AddLateUpdatable(ILateUpdateable updateable)
+        {
+            var newList = _lateUpdateables;
+            newList.Add(updateable);
+            _lateUpdateables = newList;
+        }
 
-        public void RemoveFromUpdatable(IUpdateable updateable) => 
-            _updateables.Remove(updateable);
+        public void RemoveFromUpdatable(IUpdateable updateable)
+        {
+            var newList = _updateables;
+            newList.Remove(updateable);
+            _updateables = newList;
+        }
 
-        public void RemoveFromLateUpdatable(ILateUpdateable updateable) => 
-            _lateUpdateables.Remove(updateable);
+        public void RemoveFromLateUpdatable(ILateUpdateable updateable)
+        {
+            var newList = _lateUpdateables;
+            newList.Remove(updateable);
+            _lateUpdateables = newList;
+        }
 
-        public void AddUpdatables(List<IUpdateable> updateables) => 
-            _updateables.AddRange(updateables);
+        public void AddUpdatables(List<IUpdateable> updateables)
+        {
+            var newList = _updateables;
+            newList.AddRange(updateables);
+            _updateables = newList;
+        }
     }
 }

@@ -2,29 +2,43 @@ using UnityEngine;
 
 namespace Game.CodeBase.PlayerLogic
 {
-    [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(CharacterController))]
     public class PlayerMove : MonoBehaviour
     {
-        private Rigidbody _rigidbody;
-        private float _speed;
+        [SerializeField] private LayerMask _walkable;
+        private CharacterController _character;
         private PlayerAnimator _playerAnimator;
+        private float _speed;
         private Vector3 _previousPosition;
         private Vector3 _direction;
+        private Vector3 _velocity;
+        private Collider[] _walkableColliders;
+        private const int MaxColliders = 1;
 
         public void Construct(PlayerMoveSettings moveSettings, PlayerAnimator playerAnimator)
         {
-            _rigidbody = GetComponent<Rigidbody>();
+            _walkableColliders = new Collider[MaxColliders];
+            _character = GetComponent<CharacterController>();
             _speed = moveSettings.Speed;
             _playerAnimator = playerAnimator;
         }
 
         public void Move(Vector3 direction)
         {
+            if (IsGrounded && _velocity.y < 0)
+            {
+                _velocity.y = 0f;
+            }
+            
             _direction = direction;
-            _rigidbody.transform.position += direction * (_speed * Time.deltaTime);
-            var velocity = (_previousPosition - transform.position) / Time.deltaTime;
-            _playerAnimator.SetVelocity(velocity);
-            _previousPosition = transform.position;
+            _character.Move(_direction * (_speed * Time.deltaTime));
+            _playerAnimator.SetVelocity(_character.velocity);
+            
+            _velocity.y += Physics.gravity.y * Time.deltaTime;
+            _character.Move(_velocity * Time.deltaTime);
         }
+
+        private bool IsGrounded =>
+            Physics.OverlapSphereNonAlloc(transform.position, _character.height, _walkableColliders, _walkable) > 0;
     }
 }
