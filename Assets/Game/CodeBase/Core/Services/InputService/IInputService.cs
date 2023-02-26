@@ -6,12 +6,9 @@ namespace Game.CodeBase.Core.Services.InputService
 {
     public interface IInputService : IService, IUpdateable
     {
-        Vector3 GetMoveInput();
         event Action ToggleInventory;
         event Action<Vector2> OnScreenClick;
         event Action OnAttack;
-
-        void Enable();
-        void Disable();
+        event Action <Vector3> OnMove;
     }
 }

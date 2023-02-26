@@ -19,7 +19,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private readonly IStateSwitcher _stateSwitcher;
         private IInputService _inputService;
         private IInventory _inventory;
-        private PlayerBase _player;
+        private IPlayer _player;
         private InventoryDataWindow _inventoryDataWindow;
         private LevelData _levelData;
         private ItemsData _itemsData;
@@ -36,29 +36,28 @@ namespace Game.CodeBase.Core.ProjectStates
         
         public void Enter(PayloadData payload)
         {
-            _player = payload.PlayerBase;
+            _player = payload.Player;
             _inventory = payload.Inventory;
             _levelData = payload.LevelData;
             _itemsData = _levelData.GetItemsData();
             _player.OnDie += EnterGameOverState;
             _inputService = ServiceLocator.ResolveService<IInputService>();
-            _raycaster = new CameraRaycaster(Camera.main, _inputService);
             _worldItemFactory = ServiceLocator.ResolveService<WorldItemFactory>();
             _inputService.ToggleInventory += LoadInventory;
 
             _uiFactory = ServiceLocator.ResolveService<UIFactory>();
-
             SetupWorldItems();
 
             _inventoryDataWindow = payload.InventoryDataWindow;
             _inventoryDataWindow.ItemOverviewWindow.OnApplyClick += ApplyItem;
             _inventoryDataWindow.ItemDescriptionWindow.OnAddToInventoryClick += AddItemToInventory;
             _inventoryDataWindow.InventoryWindow.OnRemoveFromInventoryClick += SpawnWorldItem;
+            _player.EnableInput();
         }
 
         public void Exit()
         {
-            _raycaster.DeInitialize();
+            _player.DisableInput();
             _player.OnDie -= EnterGameOverState;
             _inputService.ToggleInventory -= LoadInventory;
             _inventoryDataWindow.ItemOverviewWindow.OnApplyClick -= ApplyItem;
@@ -69,7 +68,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private void SpawnWorldItem(ItemType itemType)
         {
             _inventory.GetItemFromSlot(itemType);
-            var item = _worldItemFactory.CreateWorldItem(itemType, _player.transform.position);
+            var item = _worldItemFactory.CreateWorldItem(itemType, _player.Transform.position);
             item.OnWorldItemIteract += ShowItemDescription;
             _items.Add(item);
         }

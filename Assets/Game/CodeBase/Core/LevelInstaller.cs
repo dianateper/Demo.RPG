@@ -26,7 +26,7 @@ namespace Game.CodeBase.Core
         private readonly UIFactory _uiFactory;
         private readonly LevelSettings _levelSettings;
 
-        private PlayerBase _player;
+        private IPlayer _player;
         private Camera _mainCamera;
         
         private IInventory _inventory;
@@ -50,13 +50,12 @@ namespace Game.CodeBase.Core
         {
             _inputService = inputService;
             _updateableHandler.AddUpdatable(inputService);
-            _inputService.Enable();
         }
 
-        public PlayerBase CreatePlayer(IInputService inputService, List<IEnemy> enemies)
+        public IPlayer CreatePlayer(IInputService inputService, List<IEnemy> enemies, ICameraRaycaster raycaster)
         {
             var position = GameObject.FindGameObjectWithTag(Constants.PayerSpawnPointTag).transform.position;
-            _player = _playerFactory.CreatePlayer(inputService, position, enemies);
+            _player = _playerFactory.CreatePlayer(inputService, position, raycaster, enemies);
             _updateableHandler.AddUpdatable(_player);
             return _player;
         }
@@ -71,7 +70,7 @@ namespace Game.CodeBase.Core
             return _enemies;
         }
 
-        public void CreateHud(PlayerBase player)
+        public void CreateHud(IPlayer player)
         {
             var hud = _uiFactory.CreateWindow(WindowId.HUD);
             _hud = hud.GetComponent<Hud>();
@@ -82,7 +81,7 @@ namespace Game.CodeBase.Core
         {
             var window = _uiFactory.CreateWindow(WindowId.Inventory) as InventoryDataWindow;
             window.Initialize();
-            window.Construct(_levelData.GetItemsData(), inventory, _inputService);
+            window.Construct(_levelData.GetItemsData(), inventory, _player);
             window.Hide();
             return window;
         }

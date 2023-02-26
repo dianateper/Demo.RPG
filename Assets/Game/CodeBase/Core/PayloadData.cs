@@ -7,7 +7,7 @@ namespace Game.CodeBase.Core
 {
     public class PayloadData
     {
-        public PlayerBase PlayerBase;
+        public IPlayer Player;
         public IInventory Inventory;
         public InventoryDataWindow InventoryDataWindow;
         public LevelData LevelData;

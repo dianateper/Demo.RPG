@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afdd5d7892f84664ab3d0027c9ff8472, type: 3}
   m_Name: PlayerFactory
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 2368613172687759479, guid: 037b94631def92d4ca1b0a315431b48a, type: 3}
+  _prefab: {fileID: 7769699169898607020, guid: 037b94631def92d4ca1b0a315431b48a, type: 3}
   _moveSettings:
     _speed: 10
   _spawnSettings:

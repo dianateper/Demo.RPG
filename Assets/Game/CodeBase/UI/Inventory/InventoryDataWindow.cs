@@ -1,6 +1,6 @@
-﻿using Game.CodeBase.Core.Services.InputService;
-using Game.CodeBase.Inventory;
+﻿using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
+using Game.CodeBase.PlayerLogic;
 using Game.CodeBase.StaticData;
 using UnityEngine;
 
@@ -14,12 +14,13 @@ namespace Game.CodeBase.UI.Inventory
 
         private ItemsData _itemsData;
         private IInventory _inventory;
-        private IInputService _inputService;
         public InventoryWindow InventoryWindow => _inventoryWindow;
         public ItemOverviewWindow ItemOverviewWindow => _itemOverviewWindow;
         public ItemDescriptionWindow ItemDescriptionWindow => _itemDescriptionWindow;
 
-        public void Initialize()
+        private IPlayerInput _playerInput;
+
+        public override void Initialize()
         {
             base.Initialize();
             _inventoryWindow.Initialize();
@@ -27,9 +28,9 @@ namespace Game.CodeBase.UI.Inventory
             _itemOverviewWindow.Initialize();
         }
 
-        public void Construct(ItemsData itemsData, IInventory inventory, IInputService inputService)
+        public void Construct(ItemsData itemsData, IInventory inventory, IPlayerInput playerInput)
         {
-            _inputService = inputService;
+            _playerInput = playerInput;
             _itemsData = itemsData;
             _inventory = inventory;
             _inventoryWindow.OnItemClick += ShowItemOverviewWindow;
@@ -50,7 +51,7 @@ namespace Game.CodeBase.UI.Inventory
 
         public void ShowInventory()
         {
-            _inputService.Disable();
+            _playerInput.DisableInput();
             _inventoryWindow.Show(_inventory);
         }
 
@@ -59,19 +60,19 @@ namespace Game.CodeBase.UI.Inventory
             _inventoryWindow.Hide();
             _itemOverviewWindow.Hide();
             _itemDescriptionWindow.Hide();
-            _inputService.Enable();
+            _playerInput.EnableInput();
         }
 
         public void ShowItemDescription(ItemType item, WorldItem worldItem)
         {
-            _inputService.Disable();
+            _playerInput.DisableInput();
             _itemDescriptionWindow.SetWorldItem(worldItem);
             _itemDescriptionWindow.Show(_itemsData.GetItem(item));
         }
 
         private void ShowItemOverviewWindow(ItemType item)
         {
-            _inputService.Disable();
+            _playerInput.DisableInput();
             _itemOverviewWindow.Show(_itemsData.GetItem(item));
         }
 

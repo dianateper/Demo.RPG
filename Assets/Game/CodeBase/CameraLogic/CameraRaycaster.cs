@@ -1,23 +1,27 @@
 ﻿using Game.CodeBase.Common;
 using Game.CodeBase.Core.Services.InputService;
-using Game.CodeBase.Level;
 using UnityEngine;
 
 namespace Game.CodeBase.CameraLogic
 {
-    public class CameraRaycaster
+    public interface ICameraRaycaster
     {
-        private IInputService _inputService;
+        void DeInitialize();
+        void Initialize();
+    }
+
+    public class CameraRaycaster : ICameraRaycaster
+    {
+        private readonly IInputService _inputService;
         private readonly Camera _camera;
 
         public CameraRaycaster(Camera camera, IInputService inputService)
         {
             _inputService = inputService;
-            _inputService.OnScreenClick += Raycast;
             _camera = camera;
         }
 
-        private void Raycast(Vector2 screenPosition)
+        public void Raycast(Vector2 screenPosition)
         {
             if (_camera == null) return;
             var ray = _camera.ScreenPointToRay(screenPosition);
@@ -31,5 +35,6 @@ namespace Game.CodeBase.CameraLogic
         }
 
         public void DeInitialize() => _inputService.OnScreenClick -= Raycast;
+        public void Initialize() => _inputService.OnScreenClick += Raycast;
     }
 }

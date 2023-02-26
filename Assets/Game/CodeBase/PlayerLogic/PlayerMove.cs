@@ -13,6 +13,7 @@ namespace Game.CodeBase.PlayerLogic
         private Vector3 _direction;
         private Vector3 _velocity;
         private Collider[] _walkableColliders;
+        private const float GroundOffset = 0.2f;
         private const int MaxColliders = 1;
 
         public void Construct(PlayerMoveSettings moveSettings, PlayerAnimator playerAnimator)
@@ -25,20 +26,17 @@ namespace Game.CodeBase.PlayerLogic
 
         public void Move(Vector3 direction)
         {
-            if (IsGrounded && _velocity.y < 0)
-            {
-                _velocity.y = 0f;
-            }
-            
+            if (IsGrounded) _velocity.y = 0f;
+
             _direction = direction;
             _character.Move(_direction * (_speed * Time.deltaTime));
             _playerAnimator.SetVelocity(_character.velocity);
             
-            _velocity.y += Physics.gravity.y * Time.deltaTime;
+            _velocity.y +=  Physics.gravity.y * Time.deltaTime;
             _character.Move(_velocity * Time.deltaTime);
         }
 
         private bool IsGrounded =>
-            Physics.OverlapSphereNonAlloc(transform.position, _character.height, _walkableColliders, _walkable) > 0;
+            Physics.OverlapSphereNonAlloc(transform.position, _character.height / 2 + GroundOffset, _walkableColliders, _walkable) > 0;
     }
 }

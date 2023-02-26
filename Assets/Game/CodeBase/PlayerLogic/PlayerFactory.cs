@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Game.CodeBase.CameraLogic;
 using Game.CodeBase.Common;
 using Game.CodeBase.Core.Services;
 using Game.CodeBase.Core.Services.InputService;
@@ -12,17 +13,18 @@ namespace Game.CodeBase.PlayerLogic
     [CreateAssetMenu(fileName = "PlayerFactory", menuName = "RPG/PlayerFactory")]
     public class PlayerFactory : ScriptableObject, IService
     {
-        [SerializeField] private PlayerBase _prefab;
+        [SerializeField] private Player _prefab;
         [SerializeField] private PlayerMoveSettings _moveSettings;
         [SerializeField] private PlayerSpawnSettings _spawnSettings;
         [SerializeField] private HealthSettings _healthSettings;
        
-        public PlayerBase CreatePlayer(IInputService inputService, Vector3 at,
+        public IPlayer CreatePlayer(IInputService inputService, Vector3 at,
+            ICameraRaycaster cameraRaycaster = null,
             List<IEnemy> enemies = null)
         {
             at += Vector3.up * _spawnSettings.OffsetY;
             var player = Instantiate(_prefab, at, quaternion.identity);
-            player.Construct(_moveSettings,_healthSettings, inputService);
+            player.Construct(_moveSettings,_healthSettings, inputService, cameraRaycaster);
 
             if (enemies != null)
                 foreach (var enemy in enemies)

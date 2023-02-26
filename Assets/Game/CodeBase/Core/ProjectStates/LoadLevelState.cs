@@ -20,7 +20,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private List<IEnemy> _enemies;
         
         private LevelInstaller _levelInstaller;
-        private PlayerBase _player;
+        private IPlayer _player;
         private Hud _hud;
         private IUpdateableHandler _updateableHandler;
         private UIFactory _uiFactory;
@@ -30,6 +30,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private InventoryDataWindow _inventoryWindow;
         private LevelData _levelData;
         private IAssetProvider _assetProvider;
+        private ICameraRaycaster _raycaster;
 
         public LoadLevelState(IPayloadDataStateSwitcher stateSwitcher)
         {
@@ -61,6 +62,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private void RegisterInput()
         {
             _levelInstaller.RegisterInput(_inputService);
+            _raycaster = new CameraRaycaster(Camera.main, _inputService);
         }
 
         private void LoadLevelData()
@@ -76,7 +78,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private void RegisterCamera()
         {
             _mainCamera = Camera.main;
-            _levelInstaller.InitializeCamera(_player.transform, _mainCamera);
+            _levelInstaller.InitializeCamera(_player.Transform, _mainCamera);
         }
 
         private void CreateUpdateableHandler()
@@ -93,7 +95,7 @@ namespace Game.CodeBase.Core.ProjectStates
 
         private void RegisterEnemies()
         {
-            _enemies.ForEach(e => e.SetTarget(_player.transform));
+            _enemies.ForEach(e => e.SetTarget(_player.Transform));
         }
 
         private void CreateEnemies()
@@ -104,7 +106,7 @@ namespace Game.CodeBase.Core.ProjectStates
 
         private void CreatePlayer()
         {
-            _player = _levelInstaller.CreatePlayer(_inputService, _enemies);
+            _player = _levelInstaller.CreatePlayer(_inputService, _enemies, _raycaster);
             _player.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
         }
 
@@ -112,7 +114,7 @@ namespace Game.CodeBase.Core.ProjectStates
         {
             _stateSwitcher.SwitchState<GameLoopState>(new PayloadData()
             {
-                PlayerBase = _player,
+                Player = _player,
                 Inventory = _inventory,
                 InventoryDataWindow = _inventoryWindow,
                 LevelData = _levelData
