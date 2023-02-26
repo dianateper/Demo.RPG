@@ -30,7 +30,6 @@ namespace Game.CodeBase.Core
         private InventoryFactory _inventoryFactory;
         private Hud _hud;
         private List<IEnemy> _enemies;
-        private IInputService _inputService;
         private readonly LevelData _levelData;
 
         public LevelInstaller(IUpdateableHandler updateableHandler, LevelData levelData, LevelType levelType)
@@ -43,13 +42,13 @@ namespace Game.CodeBase.Core
             _levelSettings = _levelData.GetLevelSettings(levelType);
         }
 
-        public void RegisterInput(IInputService inputService)
+        public void RegisterInputs(IInputService playerInput, IInputService inventoryInput)
         {
-            _inputService = inputService;
-            _updateableHandler.AddUpdatable(inputService);
+            _updateableHandler.AddUpdatable(playerInput);
+            _updateableHandler.AddUpdatable(inventoryInput);
         }
 
-        public IPlayer CreatePlayer(IInputService inputService, List<IEnemy> enemies, ICameraRaycaster raycaster)
+        public IPlayer CreatePlayer(IPlayerInput inputService, List<IEnemy> enemies, ICameraRaycaster raycaster)
         {
             var position = GameObject.FindGameObjectWithTag(Constants.PayerSpawnPointTag).transform.position;
             _player = _playerFactory.CreatePlayer(inputService, position, raycaster, enemies);

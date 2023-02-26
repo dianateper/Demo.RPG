@@ -1,4 +1,6 @@
-﻿using Game.CodeBase.Core.Services.InputService;
+﻿using System.Collections;
+using System.Threading.Tasks;
+using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Core.States;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
@@ -13,7 +15,7 @@ namespace Game.CodeBase.Core.ProjectStates
 {
     public class InventoryState : IGamePlayState<PayloadData>
     {
-        private IPayloadDataStateSwitcher _stateSwitcher;
+        private readonly IPayloadDataStateSwitcher _stateSwitcher;
         private InventoryDataWindow _inventoryDataWindow;
         private ItemsData _itemsData;
         private UIFactory _uiFactory;
@@ -22,7 +24,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private LevelData _levelData;
         private IPlayer _player;
         private PayloadData _payloadData;
-        private IInputService _inputService;
+        private IInventoryInput _inventoryInput;
 
         public InventoryState(IPayloadDataStateSwitcher stateSwitcher)
         {
@@ -38,18 +40,38 @@ namespace Game.CodeBase.Core.ProjectStates
             _itemsData = _levelData.GetItemsData();
             _worldItemFactory = ServiceLocator.ResolveService<WorldItemFactory>();
             _uiFactory = ServiceLocator.ResolveService<UIFactory>();
-            _inputService = ServiceLocator.ResolveService<IInputService>();
+            _inventoryInput = ServiceLocator.ResolveService<IInventoryInput>();
+            _inventoryInput.OnHideInventory += HideInventoryAndEnterGameLoopState;
 
             _inventoryDataWindow = payload.InventoryDataWindow;
             _inventoryDataWindow.ItemOverviewWindow.OnApplyClick += ApplyItem;
             _inventoryDataWindow.ItemDescriptionWindow.OnAddToInventoryClick += AddItemToInventory;
             _inventoryDataWindow.InventoryWindow.OnRemoveFromInventoryClick += SpawnWorldItem;
-            _inputService.ToggleInventory += HideInventoryAndEnterGameLoopState;
+            _inventoryDataWindow.ItemDescriptionWindow.OnCloseButtonClick += HideInventoryAndEnterGameLoopState;
 
             if (_payloadData.WorldPayloadData.WordItem != null)
                 ShowWorldItemDetail(_payloadData.WorldPayloadData.WordItem);
             else
                 LoadInventory();
+
+            RegisterInput();
+        }
+
+        public void Exit()
+        {
+            _payloadData.WorldPayloadData.WordItem = null;
+            _inventoryDataWindow.ItemOverviewWindow.OnApplyClick -= ApplyItem;
+            _inventoryDataWindow.ItemDescriptionWindow.OnAddToInventoryClick -= AddItemToInventory;
+            _inventoryDataWindow.InventoryWindow.OnRemoveFromInventoryClick -= SpawnWorldItem;
+            _inventoryDataWindow.ItemDescriptionWindow.OnCloseButtonClick -= HideInventoryAndEnterGameLoopState;
+            _inventoryInput.OnHideInventory -= HideInventoryAndEnterGameLoopState;
+            _inventoryInput.IsEnabled = false;
+        }
+
+        private async Task RegisterInput()
+        {
+            await Task.Delay(200);
+            _inventoryInput.IsEnabled = true;
         }
 
         private void HideInventoryAndEnterGameLoopState()
@@ -57,21 +79,6 @@ namespace Game.CodeBase.Core.ProjectStates
             _inventoryDataWindow.Hide();
             EnterGameLoopState();
         }
-
-        public void Exit()
-        {
-            _payloadData.WorldPayloadData.WordItem = null;
-            _inputService.ToggleInventory -= HideInventoryAndEnterGameLoopState;
-            _inventoryDataWindow.ItemOverviewWindow.OnApplyClick -= ApplyItem;
-            _inventoryDataWindow.ItemDescriptionWindow.OnAddToInventoryClick -= AddItemToInventory;
-            _inventoryDataWindow.InventoryWindow.OnRemoveFromInventoryClick -= SpawnWorldItem;
-        }
-
-        private void EnterGameLoopState() => _stateSwitcher.SwitchState<GameLoopState>(_payloadData);
-
-        private void ShowWorldItemDetail(WorldItem worldItem) => _inventoryDataWindow.ShowItemDescription(worldItem.ItemType, worldItem);
-
-        private void LoadInventory() => _inventoryDataWindow.ShowInventory();
 
         private void SpawnWorldItem(ItemType itemType)
         {
@@ -91,7 +98,7 @@ namespace Game.CodeBase.Core.ProjectStates
                 ShowMessage(Constants.MessageInventoryIsFull);
             }
         }
-        
+
         private void ShowMessage(string message)
         {
             var window = _uiFactory.CreateWindow(WindowId.Message) as MessageWindow;
@@ -103,5 +110,11 @@ namespace Game.CodeBase.Core.ProjectStates
             _inventory.GetItemFromSlot(itemType);
             _player.ApplyInventoryItem(itemType);
         }
+
+        private void EnterGameLoopState() => _stateSwitcher.SwitchState<GameLoopState>(_payloadData);
+
+        private void ShowWorldItemDetail(WorldItem worldItem) => _inventoryDataWindow.ShowItemDescription(worldItem.ItemType, worldItem);
+
+        private void LoadInventory() => _inventoryDataWindow.ShowInventory();
     }
 }

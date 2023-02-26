@@ -12,9 +12,7 @@ namespace Game.CodeBase.UI.Inventory
       
         public event Action<ItemType> OnItemClick;
         public event Action<ItemType> OnRemoveFromInventoryClick;
-
-        public bool IsEnabled() => _canvas.enabled;
-
+        
         public void Show(IInventory inventory)
         {
             _inventory = inventory;
@@ -45,5 +43,7 @@ namespace Game.CodeBase.UI.Inventory
         
         private void RemoveFromInventory(ItemType itemType) => OnRemoveFromInventoryClick?.Invoke(itemType);
         private void ShowItemDetail(ItemType itemId) => OnItemClick?.Invoke(itemId);
+
+        public bool IsEnable() => _canvas.enabled;
     }
 }

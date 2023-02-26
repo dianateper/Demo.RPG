@@ -6,12 +6,10 @@ using UnityEngine;
 
 namespace Game.CodeBase.PlayerLogic
 {
-    public interface IPlayer : IUpdateable, IPlayerInput
+    public interface IPlayer : IUpdateable
     {
         IPlayerProgress Progress { get; }
         event Action OnDie;
-        void EnableInput();
-        void DisableInput();
         void ApplyInventoryItem(ItemType itemId);
         Transform Transform { get; }
     }

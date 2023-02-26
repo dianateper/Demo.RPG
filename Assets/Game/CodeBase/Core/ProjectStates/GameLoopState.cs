@@ -13,7 +13,7 @@ namespace Game.CodeBase.Core.ProjectStates
     {
         private readonly IPayloadDataStateSwitcher _payloadStateSwitcher;
         private readonly IStateSwitcher _stateSwitcher;
-        private IInputService _inputService;
+        private IPlayerInput _inputService;
         private IPlayer _player;
       
         private LevelData _levelData;
@@ -33,19 +33,19 @@ namespace Game.CodeBase.Core.ProjectStates
             _payloadData = payload;
             _player = payload.Player;
             _player.OnDie += EnterGameOverState;
-            _inputService = ServiceLocator.ResolveService<IInputService>();
-            _inputService.ToggleInventory += LoadInventoryState;
+            _inputService = ServiceLocator.ResolveService<IPlayerInput>();
+            _inputService.OnShowInventory += LoadInventoryState;
+            _inputService.IsEnabled = true;
             SetupWorldItems();
-            _player.EnableInput();
         }
 
         public void Exit()
         {
-            _player.DisableInput();
             _player.OnDie -= EnterGameOverState;
-            _inputService.ToggleInventory -= LoadInventoryState;
+            _inputService.OnShowInventory -= LoadInventoryState;
             foreach (var item in _items)
                 item.OnWorldItemIteract -= ShowItemDescription;
+            _inputService.IsEnabled = false;
         }
 
         private void ShowItemDescription(WorldItem worldItem)
@@ -55,7 +55,7 @@ namespace Game.CodeBase.Core.ProjectStates
         }
 
         private void LoadInventoryState() => _payloadStateSwitcher.SwitchState<InventoryState>(_payloadData);
-        
+
         private void SetupWorldItems()
         {
             _items = Object.FindObjectsOfType<WorldItem>().ToList();

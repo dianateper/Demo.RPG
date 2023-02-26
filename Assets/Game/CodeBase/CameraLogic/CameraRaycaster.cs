@@ -4,24 +4,28 @@ using UnityEngine;
 
 namespace Game.CodeBase.CameraLogic
 {
-    public interface ICameraRaycaster
-    {
-        void DeInitialize();
-        void Initialize();
-    }
-
     public class CameraRaycaster : ICameraRaycaster
     {
-        private readonly IInputService _inputService;
+        private readonly IPlayerInput _playerInput;
         private readonly Camera _camera;
 
-        public CameraRaycaster(Camera camera, IInputService inputService)
+        public CameraRaycaster(Camera camera, IPlayerInput playerInput)
         {
-            _inputService = inputService;
+            _playerInput = playerInput;
             _camera = camera;
         }
 
-        public void Raycast(Vector2 screenPosition)
+        public void DeInitialize()
+        {
+            _playerInput.OnScreenClick -= Raycast;
+        }
+
+        public void Initialize()
+        {
+            _playerInput.OnScreenClick += Raycast;
+        } 
+
+        private void Raycast(Vector2 screenPosition)
         {
             if (_camera == null) return;
             var ray = _camera.ScreenPointToRay(screenPosition);
@@ -33,8 +37,5 @@ namespace Game.CodeBase.CameraLogic
                 }
             }
         }
-
-        public void DeInitialize() => _inputService.OnScreenClick -= Raycast;
-        public void Initialize() => _inputService.OnScreenClick += Raycast;
     }
 }

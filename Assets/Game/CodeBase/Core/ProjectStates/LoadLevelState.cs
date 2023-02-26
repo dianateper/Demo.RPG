@@ -24,13 +24,14 @@ namespace Game.CodeBase.Core.ProjectStates
         private Hud _hud;
         private IUpdateableHandler _updateableHandler;
         private UIFactory _uiFactory;
-        private IInputService _inputService;
+        private IPlayerInput _playerInput;
         private Camera _mainCamera;
         private IInventory _inventory;
         private InventoryDataWindow _inventoryWindow;
         private LevelData _levelData;
         private IAssetProvider _assetProvider;
         private ICameraRaycaster _raycaster;
+        private IInputService _inventoryInput;
 
         public LoadLevelState(IPayloadDataStateSwitcher stateSwitcher)
         {
@@ -39,7 +40,8 @@ namespace Game.CodeBase.Core.ProjectStates
 
         public void Enter()
         {
-            _inputService = ServiceLocator.ResolveService<IInputService>();
+            _playerInput = ServiceLocator.ResolveService<IPlayerInput>();
+            _inventoryInput = ServiceLocator.ResolveService<IInventoryInput>();
             _assetProvider = ServiceLocator.ResolveService<IAssetProvider>();
 
             CreateUpdateableHandler();
@@ -47,7 +49,7 @@ namespace Game.CodeBase.Core.ProjectStates
            
             _levelInstaller = new LevelInstaller(_updateableHandler, _levelData, LevelType.Easy);
             
-            RegisterInput();
+            RegisterInputs();
             
             CreateInventory();
             CreateEnemies();
@@ -59,10 +61,10 @@ namespace Game.CodeBase.Core.ProjectStates
             EnterGameLoopState();
         }
 
-        private void RegisterInput()
+        private void RegisterInputs()
         {
-            _levelInstaller.RegisterInput(_inputService);
-            _raycaster = new CameraRaycaster(Camera.main, _inputService);
+            _levelInstaller.RegisterInputs(_playerInput, _inventoryInput);
+            _raycaster = new CameraRaycaster(Camera.main, _playerInput);
         }
 
         private void LoadLevelData()
@@ -106,7 +108,7 @@ namespace Game.CodeBase.Core.ProjectStates
 
         private void CreatePlayer()
         {
-            _player = _levelInstaller.CreatePlayer(_inputService, _enemies, _raycaster);
+            _player = _levelInstaller.CreatePlayer(_playerInput, _enemies, _raycaster);
             _player.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
         }
 

@@ -43,7 +43,8 @@ namespace Game.CodeBase.Core.Services
 
         private void RegisterInputService()
         {
-            ServiceLocator.RegisterService<IInputService>(new StandaloneInputService());
+            ServiceLocator.RegisterService<IPlayerInput>(new PlayerInput());
+            ServiceLocator.RegisterService<IInventoryInput>(new InventoryInput());
         }
     }
 }

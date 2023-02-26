@@ -20,7 +20,7 @@ namespace Game.CodeBase.PlayerLogic
         private IPlayerProgress _progress;
         private IHealth _playerHealth;
         private IInventory _inventory;
-        private IInputService _inputService;
+        private IPlayerInput _inputService;
         private ICameraRaycaster _cameraRaycaster;
         
         public IPlayerProgress Progress => _progress;
@@ -29,7 +29,7 @@ namespace Game.CodeBase.PlayerLogic
 
 
         public void Construct(PlayerMoveSettings moveSettings, HealthSettings playerHealthSettings,
-            IInputService inputService, ICameraRaycaster cameraRaycaster)
+            IPlayerInput inputService, ICameraRaycaster cameraRaycaster)
         {
             _playerHealth = GetComponent<IHealth>();
             _playerAnimator.Construct();
@@ -43,6 +43,7 @@ namespace Game.CodeBase.PlayerLogic
             _playerHealth.HealthChanged += CheckForDie;
             _playerHealth.HealthChanged += UpdateHealthData;
             _playerTrigger.OnPlayerHit += TakeDamage;
+            EnableInput();
         }
 
         private void UpdateHealthData() => 
@@ -83,15 +84,14 @@ namespace Game.CodeBase.PlayerLogic
         {
         }
 
-        public void EnableInput()
+        private void EnableInput()
         {
-            DisableInput();
             _inputService.OnMove += _playerMove.Move;
             _inputService.OnAttack += _playerAnimator.SetAttackTrigger;
             _cameraRaycaster?.Initialize();
         }
 
-        public void DisableInput()
+        private void DisableInput()
         {
             _inputService.OnMove -= _playerMove.Move;
             _inputService.OnAttack -= _playerAnimator.SetAttackTrigger;

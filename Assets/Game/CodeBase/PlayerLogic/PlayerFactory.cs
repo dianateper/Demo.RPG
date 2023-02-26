@@ -18,7 +18,7 @@ namespace Game.CodeBase.PlayerLogic
         [SerializeField] private PlayerSpawnSettings _spawnSettings;
         [SerializeField] private HealthSettings _healthSettings;
        
-        public IPlayer CreatePlayer(IInputService inputService, Vector3 at,
+        public IPlayer CreatePlayer(IPlayerInput inputService, Vector3 at,
             ICameraRaycaster cameraRaycaster = null,
             List<IEnemy> enemies = null)
         {

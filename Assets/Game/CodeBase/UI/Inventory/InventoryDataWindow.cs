@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
 using Game.CodeBase.StaticData;
@@ -12,6 +12,8 @@ namespace Game.CodeBase.UI.Inventory
         [SerializeField] private ItemOverviewWindow _itemOverviewWindow;
         [SerializeField] private ItemDescriptionWindow _itemDescriptionWindow;
 
+        private List<WindowBase> _windows;
+        
         private ItemsData _itemsData;
         private IInventory _inventory;
         public InventoryWindow InventoryWindow => _inventoryWindow;
@@ -20,10 +22,9 @@ namespace Game.CodeBase.UI.Inventory
         
         public override void Initialize()
         {
+            _windows = new List<WindowBase>() { _inventoryWindow, _itemOverviewWindow, _itemDescriptionWindow };
             base.Initialize();
-            _inventoryWindow.Initialize();
-            _itemDescriptionWindow.Initialize();
-            _itemOverviewWindow.Initialize();
+            _windows.ForEach(w => w.Initialize());
         }
 
         public void Construct(ItemsData itemsData, IInventory inventory)
@@ -54,12 +55,7 @@ namespace Game.CodeBase.UI.Inventory
             _itemDescriptionWindow.Show(_itemsData.GetItem(item));
         }
 
-        public override void Hide()
-        {
-            _inventoryWindow.Hide();
-            _itemOverviewWindow.Hide();
-            _itemDescriptionWindow.Hide();
-        }
+        public override void Hide() => _windows.ForEach(w => w.Hide());
 
         private void ShowItemOverviewWindow(ItemType item) => _itemOverviewWindow.Show(_itemsData.GetItem(item));
 
