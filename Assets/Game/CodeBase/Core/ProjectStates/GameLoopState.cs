@@ -24,8 +24,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private IUpdateableHandler _updateableHandler;
         private PayloadData _payloadData;
         private ParticleFactory _particleFactory;
-        private IAssetProvider _assetProvider;
-
+     
         public GameLoopState(IPayloadDataStateSwitcher payloadStateSwitcher, IStateSwitcher stateSwitcher)
         {
             _payloadStateSwitcher = payloadStateSwitcher;
@@ -34,8 +33,7 @@ namespace Game.CodeBase.Core.ProjectStates
         
         public void Enter(PayloadData payload)
         {
-            _assetProvider = ServiceLocator.ResolveService<IAssetProvider>();
-            _particleFactory = _assetProvider.LoadAsset<ParticleFactory>(Constants.ParticleFactoryPath);
+            _particleFactory = ServiceLocator.ResolveService<ParticleFactory>();
             _payloadData = payload;
             _player = payload.Player;
             _player.OnDie += EnterGameOverState;

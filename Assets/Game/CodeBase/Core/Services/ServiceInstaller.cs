@@ -4,6 +4,7 @@ using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.EnemyLogic;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
+using Game.CodeBase.Level.ParticleSystem;
 using Game.CodeBase.PlayerLogic;
 using Game.CodeBase.UI;
 
@@ -33,6 +34,7 @@ namespace Game.CodeBase.Core.Services
             ServiceLocator.RegisterService<PlayerFactory>(_assetProvider.LoadAsset<PlayerFactory>(Constants.PlayerFactoryPath));
             ServiceLocator.RegisterService<EnemyFactory>(_assetProvider.LoadAsset<EnemyFactory>(Constants.EnemyFactoryPath));
             ServiceLocator.RegisterService<WorldItemFactory>(_assetProvider.LoadAsset<WorldItemFactory>(Constants.WorldItemFactoryPath));
+            ServiceLocator.RegisterService<ParticleFactory>(_assetProvider.LoadAsset<ParticleFactory>(Constants.ParticleFactoryPath));
         }
 
         private void RegisterAssetProvider()

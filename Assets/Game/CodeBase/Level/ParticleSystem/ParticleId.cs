@@ -2,6 +2,7 @@
 {
     public enum ParticleId
     {
-        Hit
+        Hit,
+        Die
     }
 }

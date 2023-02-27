@@ -6,6 +6,7 @@ using Game.CodeBase.Core.Updates;
 using Game.CodeBase.EnemyLogic;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
+using Game.CodeBase.Level.ParticleSystem;
 using Game.CodeBase.PlayerLogic;
 using Game.CodeBase.UI;
 using Game.CodeBase.UI.Hud;
@@ -22,16 +23,14 @@ namespace Game.CodeBase.Core
         private readonly PlayerFactory _playerFactory;
         private readonly UIFactory _uiFactory;
         private readonly LevelSettings _levelSettings;
-
         private IPlayer _player;
         private Camera _mainCamera;
-        
         private IInventory _inventory;
         private InventoryFactory _inventoryFactory;
         private Hud _hud;
         private List<IEnemy> _enemies;
         private readonly LevelData _levelData;
-
+        
         public LevelInstaller(IUpdateableHandler updateableHandler, LevelData levelData, LevelType levelType)
         {
             _updateableHandler = updateableHandler;

@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using Game.CodeBase.Core.Services;
+using UnityEngine;
 
 namespace Game.CodeBase.Level.ParticleSystem
 {
     [CreateAssetMenu(fileName = "ParticleFactory", menuName = "RPG/ParticleFactory")]
-    public class ParticleFactory : ScriptableObject
+    public class ParticleFactory : ScriptableObject, IService
     {
         [SerializeField] private ParticlesData _particles;
 

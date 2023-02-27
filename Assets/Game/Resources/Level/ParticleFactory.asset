@@ -17,3 +17,7 @@ MonoBehaviour:
     - _particleId: 0
       _particle: {fileID: 180950, guid: 0c2b23e202d7cc94889ac9db47aa6cce, type: 3}
       _lifeTime: 2
+    - _particleId: 1
+      _particle: {fileID: 2724498477120315643, guid: 49759e5b7ab8aab43b6f6eabcf276068,
+        type: 3}
+      _lifeTime: 3
