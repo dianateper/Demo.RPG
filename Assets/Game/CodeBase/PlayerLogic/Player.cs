@@ -27,7 +27,6 @@ namespace Game.CodeBase.PlayerLogic
         public Transform Transform => transform;
         public event Action OnDie;
 
-
         public void Construct(PlayerMoveSettings moveSettings, HealthSettings playerHealthSettings,
             IPlayerInput inputService, ICameraRaycaster cameraRaycaster)
         {
@@ -46,12 +45,6 @@ namespace Game.CodeBase.PlayerLogic
             EnableInput();
         }
 
-        private void UpdateHealthData() => 
-            Progress.HealthData.CurrentHealth = _playerHealth.Current;
-
-        private void TakeDamage(float damage) => _playerHealth.TakeDamage(damage);
-
-
         private void OnDestroy()
         {
             _playerHealth.HealthChanged -= CheckForDie;
@@ -59,6 +52,11 @@ namespace Game.CodeBase.PlayerLogic
             _playerHealth.HealthChanged -= UpdateHealthData;
             DisableInput();
         }
+
+        private void UpdateHealthData() => 
+            Progress.HealthData.CurrentHealth = _playerHealth.Current;
+
+        private void TakeDamage(float damage) => _playerHealth.TakeDamage(damage);
 
         private void CheckForDie()
         {
@@ -72,13 +70,9 @@ namespace Game.CodeBase.PlayerLogic
             Destroy(gameObject);
         }
 
-        public void OnUpdate(float deltaTime) => 
-            _playerWeaponRig.OnUpdate();
+        public void OnUpdate(float deltaTime) => _playerWeaponRig.OnUpdate();
 
-        public void Kill()
-        {
-            Progress.KillData.EnemiesKilled++;
-        }
+        public void Kill() => Progress.KillData.EnemiesKilled++;
 
         public void ApplyInventoryItem(ItemType itemId)
         {
