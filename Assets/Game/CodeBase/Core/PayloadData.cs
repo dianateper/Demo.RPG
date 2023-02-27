@@ -12,7 +12,7 @@ namespace Game.CodeBase.Core
         public InventoryDataWindow InventoryDataWindow;
         public LevelData LevelData;
         public WorldPayloadData WorldPayloadData;
-
+       
         public PayloadData()
         {
             WorldPayloadData = new WorldPayloadData();

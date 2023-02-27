@@ -13,12 +13,12 @@ namespace Game.CodeBase.EnemyLogic.States
         public Transform Target { get; set; }
 
 
-        public EnemyDieState(MonoBehaviour monoBehaviour, EnemyAnimator enemyAnimator, NavMeshAgent agent)
+        public EnemyDieState(MonoBehaviour monoBehaviour, EnemyAnimator enemyAnimator, NavMeshAgent agent, float destroyDelay)
         {
             _agent = agent;
             _monoBehaviour = monoBehaviour;
             _enemyAnimator = enemyAnimator;
-            _destroyDelay =  new WaitForSeconds(3);
+            _destroyDelay =  new WaitForSeconds(destroyDelay);
         }
 
         public void Enter()

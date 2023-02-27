@@ -39,7 +39,6 @@ namespace Game.CodeBase.Core.ProjectStates
             _payloadData = payload;
             _player = payload.Player;
             _player.OnDie += EnterGameOverState;
-            _player.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
             _player.OnDamageHit += CreateHitParticle;
             _inputService = ServiceLocator.ResolveService<IPlayerInput>();
             _inputService.OnShowInventory += LoadInventoryState;
@@ -50,7 +49,6 @@ namespace Game.CodeBase.Core.ProjectStates
         public void Exit()
         {
             _player.OnDie -= EnterGameOverState;
-            _player.OnDie -= () => _updateableHandler.RemoveFromUpdatable(_player);
             _player.OnDamageHit += CreateHitParticle;
             _inputService.OnShowInventory -= LoadInventoryState;
             foreach (var item in _items)

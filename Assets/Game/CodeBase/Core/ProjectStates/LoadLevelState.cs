@@ -61,14 +61,14 @@ namespace Game.CodeBase.Core.ProjectStates
             EnterGameLoopState();
         }
 
-        private void CreateLevelInstaller()
-        {
-            _levelInstaller = new LevelInstaller(_updateableHandler, _levelData, LevelType.Easy);
-        }
-
         public void Exit()
         {
            
+        }
+
+        private void CreateLevelInstaller()
+        {
+            _levelInstaller = new LevelInstaller(_updateableHandler, _levelData, LevelType.Easy);
         }
 
         private void ResolveServices()
@@ -119,8 +119,11 @@ namespace Game.CodeBase.Core.ProjectStates
             _enemies = _levelInstaller.CreateEnemies(EnemyType.Base,
                 ServiceLocator.ResolveService<EnemyFactory>());
 
-        private void CreatePlayer() => 
+        private void CreatePlayer()
+        {
             _player = _levelInstaller.CreatePlayer(_playerInput, _enemies, _raycaster);
+            _player.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
+        }
 
         private void EnterGameLoopState()
         {

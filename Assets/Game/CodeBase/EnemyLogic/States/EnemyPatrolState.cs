@@ -36,7 +36,7 @@ namespace Game.CodeBase.EnemyLogic.States
 
         public void Exit()
         {
-            
+            _agent.SetDestination(_agent.transform.position);
         }
 
         public void OnUpdate(float deltaTime)

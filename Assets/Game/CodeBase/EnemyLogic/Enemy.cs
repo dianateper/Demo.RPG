@@ -43,7 +43,7 @@ namespace Game.CodeBase.EnemyLogic
                 new EnemyPatrolState(this, _agent, _enemyAnimator, _waypoints, _agentConfiguration),
                 new EnemyChaseState(this, _agent, _enemyAnimator, _agentConfiguration),
                 new EnemyAttackState(this, _agent, _enemyAnimator),
-                new EnemyDieState(this, _enemyAnimator, _agent)
+                new EnemyDieState(this, _enemyAnimator, _agent, agentConfiguration.DestroyDelay)
             };
 
             _enemyHealth.Construct(enemyDataHealthSettings);

@@ -11,8 +11,7 @@ namespace Game.CodeBase.EnemyLogic.States
         private readonly float _attackDistance;
         private readonly IStateSwitcher _stateSwitcher;
         public Transform Target { get; set; }
-
-
+        
         public EnemyAttackState(IStateSwitcher stateSwitcher,
             NavMeshAgent agent,
             EnemyAnimator enemyAnimator) 
@@ -30,7 +29,7 @@ namespace Game.CodeBase.EnemyLogic.States
 
         public void Exit()
         {
-
+            _agent.SetDestination(_agent.transform.position);
         }
 
         public void OnUpdate(float deltaTime)
