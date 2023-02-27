@@ -10,5 +10,6 @@ namespace Game.CodeBase
         public const string WorldItemFactoryPath = "Inventory/WorldItemFactory";
         public const string Level = "Level";
         public const string MessageInventoryIsFull = "Inventory is full";
+        public const string ParticleFactoryPath = "Level/ParticleFactory";
     }
 }

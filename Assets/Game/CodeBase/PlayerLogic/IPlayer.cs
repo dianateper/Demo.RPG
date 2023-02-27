@@ -10,6 +10,7 @@ namespace Game.CodeBase.PlayerLogic
     {
         IPlayerProgress Progress { get; }
         event Action OnDie;
+        event Action<Vector3> OnDamageHit;
         void ApplyInventoryItem(ItemType itemId);
         Transform Transform { get; }
     }

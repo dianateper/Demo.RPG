@@ -10,11 +10,9 @@ namespace Game.CodeBase.Level
     {
         [SerializeField] private List<LevelSettings> _levelSettings;
         [SerializeField] private ItemsData _itemsData;
-
-        public LevelSettings GetLevelSettings(LevelType levelType)
-        {
-            return _levelSettings.FirstOrDefault(l => l.LevelType == levelType);
-        }
+   
+        public LevelSettings GetLevelSettings(LevelType levelType) => 
+            _levelSettings.FirstOrDefault(l => l.LevelType == levelType);
 
         public ItemsData GetItemsData() => Instantiate(_itemsData);
     }

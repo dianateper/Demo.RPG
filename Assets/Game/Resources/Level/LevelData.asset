@@ -26,3 +26,7 @@ MonoBehaviour:
     _numberOfEnemies: 10
     _spawnInnerRadius: 10
   _itemsData: {fileID: 11400000, guid: d2670f0134ec8a44ba82a8526705f949, type: 2}
+  _particles:
+    _particles:
+    - _particleId: 0
+      _particle: {fileID: 180950, guid: f2a398acbf213024aa23b14c390770bf, type: 3}

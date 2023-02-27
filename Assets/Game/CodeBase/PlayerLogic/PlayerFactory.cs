@@ -17,6 +17,7 @@ namespace Game.CodeBase.PlayerLogic
         [SerializeField] private PlayerMoveSettings _moveSettings;
         [SerializeField] private PlayerSpawnSettings _spawnSettings;
         [SerializeField] private HealthSettings _healthSettings;
+        [SerializeField] private GameObject _spawnRing;
        
         public IPlayer CreatePlayer(IPlayerInput inputService, Vector3 at,
             ICameraRaycaster cameraRaycaster = null,
@@ -25,7 +26,6 @@ namespace Game.CodeBase.PlayerLogic
             at += Vector3.up * _spawnSettings.OffsetY;
             var player = Instantiate(_prefab, at, quaternion.identity);
             player.Construct(_moveSettings,_healthSettings, inputService, cameraRaycaster);
-
             if (enemies != null)
                 foreach (var enemy in enemies)
                     enemy.OnDie += _ => player.Kill();

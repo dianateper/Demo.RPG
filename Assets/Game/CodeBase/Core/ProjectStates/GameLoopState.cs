@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Game.CodeBase.CameraLogic;
+using Game.CodeBase.Core.Services.AssetProvider;
 using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Core.States;
 using Game.CodeBase.Level;
+using Game.CodeBase.Level.ParticleSystem;
 using Game.CodeBase.PlayerLogic;
 using UnityEngine;
 
@@ -21,7 +23,9 @@ namespace Game.CodeBase.Core.ProjectStates
         private CameraRaycaster _raycaster;
         private IUpdateableHandler _updateableHandler;
         private PayloadData _payloadData;
-    
+        private ParticleFactory _particleFactory;
+        private IAssetProvider _assetProvider;
+
         public GameLoopState(IPayloadDataStateSwitcher payloadStateSwitcher, IStateSwitcher stateSwitcher)
         {
             _payloadStateSwitcher = payloadStateSwitcher;
@@ -30,9 +34,13 @@ namespace Game.CodeBase.Core.ProjectStates
         
         public void Enter(PayloadData payload)
         {
+            _assetProvider = ServiceLocator.ResolveService<IAssetProvider>();
+            _particleFactory = _assetProvider.LoadAsset<ParticleFactory>(Constants.ParticleFactoryPath);
             _payloadData = payload;
             _player = payload.Player;
             _player.OnDie += EnterGameOverState;
+            _player.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
+            _player.OnDamageHit += CreateHitParticle;
             _inputService = ServiceLocator.ResolveService<IPlayerInput>();
             _inputService.OnShowInventory += LoadInventoryState;
             _inputService.IsEnabled = true;
@@ -42,6 +50,8 @@ namespace Game.CodeBase.Core.ProjectStates
         public void Exit()
         {
             _player.OnDie -= EnterGameOverState;
+            _player.OnDie -= () => _updateableHandler.RemoveFromUpdatable(_player);
+            _player.OnDamageHit += CreateHitParticle;
             _inputService.OnShowInventory -= LoadInventoryState;
             foreach (var item in _items)
                 item.OnWorldItemIteract -= ShowItemDescription;
@@ -65,5 +75,8 @@ namespace Game.CodeBase.Core.ProjectStates
 
         private void EnterGameOverState() => 
             _stateSwitcher.SwitchState<GameOverState>();
+        
+        private void CreateHitParticle(Vector3 at) => 
+            _particleFactory.CreateParticle(ParticleId.Hit, at, true);
     }
 }

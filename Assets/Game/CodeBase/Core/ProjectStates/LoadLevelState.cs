@@ -6,6 +6,7 @@ using Game.CodeBase.Core.States;
 using Game.CodeBase.EnemyLogic;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
+using Game.CodeBase.Level.ParticleSystem;
 using Game.CodeBase.PlayerLogic;
 using Game.CodeBase.UI;
 using Game.CodeBase.UI.Hud;
@@ -32,6 +33,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private IAssetProvider _assetProvider;
         private ICameraRaycaster _raycaster;
         private IInventoryInput _inventoryInput;
+        private ParticleFactory _particleFactory;
 
         public LoadLevelState(IPayloadDataStateSwitcher stateSwitcher)
         {
@@ -40,14 +42,12 @@ namespace Game.CodeBase.Core.ProjectStates
 
         public void Enter()
         {
-            _playerInput = ServiceLocator.ResolveService<IPlayerInput>();
-            _inventoryInput = ServiceLocator.ResolveService<IInventoryInput>();
-            _assetProvider = ServiceLocator.ResolveService<IAssetProvider>();
+            ResolveServices();
 
             CreateUpdateableHandler();
             LoadLevelData();
-           
-            _levelInstaller = new LevelInstaller(_updateableHandler, _levelData, LevelType.Easy);
+            
+            CreateLevelInstaller();
             
             RegisterInputs();
             
@@ -59,6 +59,23 @@ namespace Game.CodeBase.Core.ProjectStates
             CreateUI();
             RegisterCamera();
             EnterGameLoopState();
+        }
+
+        private void CreateLevelInstaller()
+        {
+            _levelInstaller = new LevelInstaller(_updateableHandler, _levelData, LevelType.Easy);
+        }
+
+        public void Exit()
+        {
+           
+        }
+
+        private void ResolveServices()
+        {
+            _playerInput = ServiceLocator.ResolveService<IPlayerInput>();
+            _inventoryInput = ServiceLocator.ResolveService<IInventoryInput>();
+            _assetProvider = ServiceLocator.ResolveService<IAssetProvider>();
         }
 
         private void RegisterInputs()
@@ -95,22 +112,15 @@ namespace Game.CodeBase.Core.ProjectStates
             _inventoryWindow = _levelInstaller.CreateInventoryDataWindow(_inventory);
         }
 
-        private void RegisterEnemies()
-        {
+        private void RegisterEnemies() => 
             _enemies.ForEach(e => e.SetTarget(_player.Transform));
-        }
 
-        private void CreateEnemies()
-        {
+        private void CreateEnemies() =>
             _enemies = _levelInstaller.CreateEnemies(EnemyType.Base,
                 ServiceLocator.ResolveService<EnemyFactory>());
-        }
 
-        private void CreatePlayer()
-        {
+        private void CreatePlayer() => 
             _player = _levelInstaller.CreatePlayer(_playerInput, _enemies, _raycaster);
-            _player.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
-        }
 
         private void EnterGameLoopState()
         {
@@ -121,11 +131,6 @@ namespace Game.CodeBase.Core.ProjectStates
                 InventoryDataWindow = _inventoryWindow,
                 LevelData = _levelData
             });
-        }
-
-        public void Exit()
-        {
-           
         }
     }
 }

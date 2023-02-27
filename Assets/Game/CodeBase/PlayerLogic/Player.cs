@@ -16,6 +16,7 @@ namespace Game.CodeBase.PlayerLogic
         [SerializeField] private PlayerTrigger _playerTrigger;
         [SerializeField] private PlayerAnimator _playerAnimator;
         [SerializeField] private PlayerWeaponRig _playerWeaponRig;
+        [SerializeField] private PlayerWeaponTrigger _weaponTrigger;
 
         private IPlayerProgress _progress;
         private IHealth _playerHealth;
@@ -26,6 +27,7 @@ namespace Game.CodeBase.PlayerLogic
         public IPlayerProgress Progress => _progress;
         public Transform Transform => transform;
         public event Action OnDie;
+        public event Action<Vector3> OnDamageHit;
 
         public void Construct(PlayerMoveSettings moveSettings, HealthSettings playerHealthSettings,
             IPlayerInput inputService, ICameraRaycaster cameraRaycaster)
@@ -42,6 +44,7 @@ namespace Game.CodeBase.PlayerLogic
             _playerHealth.HealthChanged += CheckForDie;
             _playerHealth.HealthChanged += UpdateHealthData;
             _playerTrigger.OnPlayerHit += TakeDamage;
+            _weaponTrigger.OnDamageHit += pos =>  OnDamageHit?.Invoke(pos);
             EnableInput();
         }
 
@@ -50,6 +53,7 @@ namespace Game.CodeBase.PlayerLogic
             _playerHealth.HealthChanged -= CheckForDie;
             _playerTrigger.OnPlayerHit -= TakeDamage;
             _playerHealth.HealthChanged -= UpdateHealthData;
+            _weaponTrigger.OnDamageHit -= pos =>  OnDamageHit?.Invoke(pos);
             DisableInput();
         }
 

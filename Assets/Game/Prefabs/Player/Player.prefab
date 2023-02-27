@@ -53,6 +53,7 @@ MonoBehaviour:
   _playerTrigger: {fileID: 8646210093533534979}
   _playerAnimator: {fileID: 4924583979628560289}
   _playerWeaponRig: {fileID: 2999373008409720284}
+  _weaponTrigger: {fileID: 1530378023411818010}
 --- !u!114 &3775780566236050882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,7 +360,7 @@ PrefabInstance:
     - target: {fileID: 479712339495399677, guid: 29d3489836d6fca409c380aef4ff596d,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: 5.15
       objectReference: {fileID: 0}
     - target: {fileID: 479712339495399677, guid: 29d3489836d6fca409c380aef4ff596d,
         type: 3}
@@ -406,6 +407,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1516914474925820632, guid: 29d3489836d6fca409c380aef4ff596d,
+        type: 3}
+      propertyPath: _levelData
+      value: 
+      objectReference: {fileID: 11400000, guid: d318e37d7141e6d44b902ad73b1c5b70,
+        type: 2}
     - target: {fileID: 2658190178954959146, guid: 29d3489836d6fca409c380aef4ff596d,
         type: 3}
       propertyPath: m_LocalPosition.z
@@ -442,6 +449,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 14028779070198978}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1530378023411818010 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1516914474925820632, guid: 29d3489836d6fca409c380aef4ff596d,
+    type: 3}
+  m_PrefabInstance: {fileID: 14028779070198978}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8410564166568628307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffd14391844b54e40b4594551b32b131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8410564166568628307 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8397388759149003921, guid: 29d3489836d6fca409c380aef4ff596d,
