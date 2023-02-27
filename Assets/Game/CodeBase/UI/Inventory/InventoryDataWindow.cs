@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.Level;
 using Game.CodeBase.StaticData;
@@ -33,7 +32,7 @@ namespace Game.CodeBase.UI.Inventory
             _itemsData = itemsData;
             _inventory = inventory;
             _inventoryWindow.OnItemClick += ShowItemOverviewWindow;
-            _inventoryWindow.OnRemoveFromInventoryClick += Hide;
+            _inventoryWindow.OnRemoveFromInventoryClick += RefreshInventoryWindow;
             _itemOverviewWindow.OnApplyClick += ClearInventoryWindowAndCloseOverviewWindow;
             _itemOverviewWindow.OnCloseButtonClick += _itemOverviewWindow.Hide;
             _itemOverviewWindow.OnCloseButtonClick += _inventoryWindow.ActivateFirstSlot;
@@ -42,19 +41,12 @@ namespace Game.CodeBase.UI.Inventory
 
         private void OnDestroy()
         {
-            _inventoryWindow.OnRemoveFromInventoryClick -= Hide;
+            _inventoryWindow.OnRemoveFromInventoryClick -= RefreshInventoryWindow;
             _inventoryWindow.OnItemClick -= ShowItemOverviewWindow;
             _itemOverviewWindow.OnCloseButtonClick -= Hide;
             _itemDescriptionWindow.OnCloseButtonClick -= _itemOverviewWindow.Hide;
             _itemOverviewWindow.OnCloseButtonClick -= _inventoryWindow.ActivateFirstSlot;
             _itemOverviewWindow.OnApplyClick -= ClearInventoryWindowAndCloseOverviewWindow;
-        }
-
-        private void ClearInventoryWindowAndCloseOverviewWindow(ItemType itemType)
-        {
-            _inventoryWindow.Hide();
-            _inventoryWindow.Show();
-            _itemOverviewWindow.Hide();
         }
 
         public void ShowInventory() => _inventoryWindow.Show(_inventory);
@@ -67,6 +59,18 @@ namespace Game.CodeBase.UI.Inventory
 
         public override void Hide() => _windows.ForEach(w => w.Hide());
 
+        private void RefreshInventoryWindow(ItemType itemType)
+        {
+            _inventoryWindow.Hide();
+            _inventoryWindow.Show();
+        }
+
+        private void ClearInventoryWindowAndCloseOverviewWindow(ItemType itemType)
+        {
+            RefreshInventoryWindow(itemType);
+            _itemOverviewWindow.Hide();
+        }
+
         private void ShowItemOverviewWindow(ItemType item)
         {
             if (_itemOverviewWindow.IsEnabled && _itemOverviewWindow.ItemType != item)
@@ -74,7 +78,5 @@ namespace Game.CodeBase.UI.Inventory
             else if(_itemOverviewWindow.IsEnabled == false)
                 _itemOverviewWindow.AnimateShow(_itemsData.GetItem(item));
         }
-
-        private void Hide(ItemType _) => Hide();
     }
 }
