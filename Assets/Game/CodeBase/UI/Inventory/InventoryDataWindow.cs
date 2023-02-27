@@ -28,15 +28,15 @@ namespace Game.CodeBase.UI.Inventory
             _windows.ForEach(w => w.Initialize());
         }
 
-        public void Construct(ItemsData itemsData, IInventory inventory, IInventoryInput inventoryInput)
+        public void Construct(ItemsData itemsData, IInventory inventory)
         {
             _itemsData = itemsData;
             _inventory = inventory;
-            _inventoryWindow.Construct(inventoryInput);
             _inventoryWindow.OnItemClick += ShowItemOverviewWindow;
             _inventoryWindow.OnRemoveFromInventoryClick += Hide;
             _itemOverviewWindow.OnApplyClick += ClearInventoryWindowAndCloseOverviewWindow;
             _itemOverviewWindow.OnCloseButtonClick += _itemOverviewWindow.Hide;
+            _itemOverviewWindow.OnCloseButtonClick += _inventoryWindow.ActivateFirstSlot;
             _itemDescriptionWindow.OnCloseButtonClick += Hide;
         }
 
@@ -46,6 +46,7 @@ namespace Game.CodeBase.UI.Inventory
             _inventoryWindow.OnItemClick -= ShowItemOverviewWindow;
             _itemOverviewWindow.OnCloseButtonClick -= Hide;
             _itemDescriptionWindow.OnCloseButtonClick -= _itemOverviewWindow.Hide;
+            _itemOverviewWindow.OnCloseButtonClick -= _inventoryWindow.ActivateFirstSlot;
             _itemOverviewWindow.OnApplyClick -= ClearInventoryWindowAndCloseOverviewWindow;
         }
 
@@ -61,12 +62,18 @@ namespace Game.CodeBase.UI.Inventory
         public void ShowItemDescription(ItemType item, WorldItem worldItem)
         {
             _itemDescriptionWindow.SetWorldItem(worldItem);
-            _itemDescriptionWindow.Show(_itemsData.GetItem(item));
+            _itemDescriptionWindow.AnimateShow(_itemsData.GetItem(item));
         }
 
         public override void Hide() => _windows.ForEach(w => w.Hide());
 
-        private void ShowItemOverviewWindow(ItemType item) => _itemOverviewWindow.Show(_itemsData.GetItem(item));
+        private void ShowItemOverviewWindow(ItemType item)
+        {
+            if (_itemOverviewWindow.IsEnabled && _itemOverviewWindow.ItemType != item)
+                _itemOverviewWindow.AnimateHide(() => _itemOverviewWindow.AnimateShow(_itemsData.GetItem(item)));
+            else if(_itemOverviewWindow.IsEnabled == false)
+                _itemOverviewWindow.AnimateShow(_itemsData.GetItem(item));
+        }
 
         private void Hide(ItemType _) => Hide();
     }

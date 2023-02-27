@@ -16,6 +16,6 @@ namespace Game.CodeBase.UI.Inventory
             _applyButton.onClick.AddListener(ApplyItem);
         }
 
-        private void ApplyItem() => OnApplyClick?.Invoke(_itemType);
+        private void ApplyItem() => OnApplyClick?.Invoke(ItemType);
     }
 }

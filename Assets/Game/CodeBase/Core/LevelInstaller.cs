@@ -73,12 +73,11 @@ namespace Game.CodeBase.Core
             _hud.Construct(player.Progress.HealthData, player.Progress.KillData);
         }
 
-        public InventoryDataWindow CreateInventoryDataWindow(IInventory inventory, IInventoryInput inventoryInput)
+        public InventoryDataWindow CreateInventoryDataWindow(IInventory inventory)
         {
             var window = _uiFactory.CreateWindow(WindowId.Inventory) as InventoryDataWindow;
             window.Initialize();
-            window.Construct(_levelData.GetItemsData(), inventory, inventoryInput);
-            window.Hide();
+            window.Construct(_levelData.GetItemsData(), inventory);
             return window;
         }
 

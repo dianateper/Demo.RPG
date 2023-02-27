@@ -11,6 +11,8 @@ namespace Game.CodeBase.UI
         {
             _canvas = GetComponent<Canvas>();
         }
+
+        public bool IsEnabled => _canvas != null &&_canvas.enabled;
         
         public virtual void Hide() => _canvas.enabled = false;
 

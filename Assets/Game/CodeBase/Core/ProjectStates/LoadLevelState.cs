@@ -92,7 +92,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private void CreateUI()
         {
             _levelInstaller.CreateHud(_player);
-            _inventoryWindow = _levelInstaller.CreateInventoryDataWindow(_inventory, _inventoryInput);
+            _inventoryWindow = _levelInstaller.CreateInventoryDataWindow(_inventory);
         }
 
         private void RegisterEnemies()

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Inventory;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace Game.CodeBase.UI.Inventory
 {
@@ -11,23 +12,16 @@ namespace Game.CodeBase.UI.Inventory
         [SerializeField] private List<SlotView> _slotViews;
         private IInventory _inventory;
 
-        private IInventoryInput _inventoryInput;
         private int _activeSlotIndex;
         
         public event Action<ItemType> OnItemClick;
         public event Action<ItemType> OnRemoveFromInventoryClick;
-
-        public void Construct(IInventoryInput inventoryInput)
-        {
-            _inventoryInput = inventoryInput;
-        }
 
         public void Show(IInventory inventory)
         {
             _activeSlotIndex = 0;
             _inventory = inventory;
             RegisterSlotViews();
-            SubscribeInput();
             ActivateFirstSlot();
             Show();
         }
@@ -36,35 +30,14 @@ namespace Game.CodeBase.UI.Inventory
         {
             base.Hide();
             ClearSlotViews();
-            UnsubscribeInput();
         }
 
-        private void ActivateFirstSlot()
+        public void ActivateFirstSlot()
         {
-            if (_inventory.Slots.Count > 0)
-                _slotViews[_activeSlotIndex].SetActive();
+            if (_inventory.Slots.Count > 0) 
+                EventSystem.current.SetSelectedGameObject(_slotViews[0].gameObject);
         }
-
-        private void ActivateRightSlot()
-        {
-            if (_inventory.Slots.Count == 0) return;
-            _slotViews[_activeSlotIndex].Deactivate();
-            if (_activeSlotIndex >= _inventory.Slots.Count - 1) 
-                _activeSlotIndex = -1;
-            _activeSlotIndex++;
-            _slotViews[_activeSlotIndex].SetActive();
-        }
-
-        private void ActivateLeftSlot()
-        {
-            if (_inventory.Slots.Count == 0) return;
-            _slotViews[_activeSlotIndex].Deactivate();
-            if (_activeSlotIndex <= 0) 
-                _activeSlotIndex = _inventory.Slots.Count;
-            _activeSlotIndex--;
-            _slotViews[_activeSlotIndex].SetActive();
-        }
-
+        
         private void RegisterSlotViews()
         {
             for (int i = 0; i < _inventory.Slots.Count; i++)
@@ -86,24 +59,7 @@ namespace Game.CodeBase.UI.Inventory
                     _slotViews[i].OnRemoveItemFromInventoryClick -= RemoveFromInventory;
                     _slotViews[i].Clear();
                 }
-
-                _slotViews[_activeSlotIndex]?.Deactivate();
             }
-        }
-
-        private void UnsubscribeInput()
-        {
-            if (_inventoryInput != null)
-            {
-                _inventoryInput.OnLeftArrowPress -= ActivateLeftSlot;
-                _inventoryInput.OnRightArrowPress -= ActivateRightSlot;
-            }
-        }
-
-        private void SubscribeInput()
-        {
-            _inventoryInput.OnLeftArrowPress += ActivateLeftSlot;
-            _inventoryInput.OnRightArrowPress += ActivateRightSlot;
         }
 
         private void RemoveFromInventory(ItemType itemType) => OnRemoveFromInventoryClick?.Invoke(itemType);

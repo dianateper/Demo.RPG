@@ -16,7 +16,7 @@ namespace Game.CodeBase.UI.Inventory
         [SerializeField] private RectTransform _container;
         
         private const float SlideDuration = 0.3f;
-        protected ItemType _itemType;
+        public ItemType ItemType;
         
         public event Action OnCloseButtonClick;
 
@@ -35,17 +35,31 @@ namespace Game.CodeBase.UI.Inventory
             _itemImage.sprite = item.Sprite;
             _title.text = item.Name;
             _description.text = item.Description;
-            _itemType = item.ItemId;
+            ItemType = item.ItemId;
             _container.anchoredPosition = Vector2.up * _container.sizeDelta.y;            
             
             base.Show();
-            Animate();
         }
 
-        private void Animate()
+        private void AnimateSlideDown()
         {
            _container.DOAnchorPos(Vector2.down * _container.sizeDelta.y, SlideDuration)
                 .SetEase(Ease.Flash);
         }
+        
+        private void AnimateSlideUp(TweenCallback onComplete)
+        {
+            _container
+                .DOAnchorPos(Vector2.up * _container.sizeDelta.y, SlideDuration)
+                .SetEase(Ease.Flash).OnComplete(onComplete);
+        }
+
+        public void AnimateShow(IItem item)
+        {
+            AnimateSlideDown();
+            Show(item);
+        }
+        
+        public void AnimateHide(TweenCallback onComplete) => AnimateSlideUp(onComplete);
     }
 }
