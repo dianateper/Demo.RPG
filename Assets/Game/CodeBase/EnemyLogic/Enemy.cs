@@ -23,12 +23,14 @@ namespace Game.CodeBase.EnemyLogic
         private Transform _target;
         private NavMeshAgent _agent;
         private EnemyAnimator _enemyAnimator;
+        private ParticleFactory _particleFactory;
         private float _currentHealth;
         private float _maxHealth;
         private bool _died;
-        private ParticleFactory _particleFactory;
+        private float _damage;
 
         public event Action<IEnemy> OnDie;
+        public float Damage => _damage;
 
         public void Construct(EnemyAgentConfiguration agentConfiguration,
             HealthSettings enemyDataHealthSettings,
@@ -40,7 +42,7 @@ namespace Game.CodeBase.EnemyLogic
             _waypoints = waypoints;
             _agentConfiguration = agentConfiguration;
             _particleFactory = ServiceLocator.ResolveService<ParticleFactory>();
-            
+            _damage = agentConfiguration.Damage;
             _enemyStates = new List<IEnemyState>
             {
                 new EnemyIdleState(this, _agentConfiguration.IdleTime, _enemyAnimator),

@@ -6,11 +6,11 @@ namespace Game.CodeBase.PlayerLogic
 {
     public class PlayerWeaponTrigger : MonoBehaviour
     {
-        public event Action<IHealth, Vector3> OnDamageHit;
+        public event Action<IDamageable, Vector3> OnDamageHit;
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out IHealth damageable))
+            if (other.TryGetComponent(out IDamageable damageable))
             {
                 OnDamageHit?.Invoke(damageable, transform.position);
             }

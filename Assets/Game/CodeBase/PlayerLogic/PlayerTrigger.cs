@@ -1,5 +1,5 @@
 using System;
-using Game.CodeBase.EnemyLogic;
+using Game.CodeBase.Common;
 using UnityEngine;
 
 namespace Game.CodeBase.PlayerLogic
@@ -10,9 +10,9 @@ namespace Game.CodeBase.PlayerLogic
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.TryGetComponent(out IEnemy _))
+            if (other.TryGetComponent(out IDamager damager))
             {
-                OnPlayerHit?.Invoke(1);
+                OnPlayerHit?.Invoke(damager.Damage);
             }
         }
     }

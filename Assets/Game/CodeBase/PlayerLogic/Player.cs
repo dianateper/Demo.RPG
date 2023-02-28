@@ -29,23 +29,24 @@ namespace Game.CodeBase.PlayerLogic
         private ICameraRaycaster _cameraRaycaster;
 
         public IPlayerProgress Progress => _progress;
+        public IHealth PlayerHealth => _playerHealth;
         public Transform Transform => transform;
-        public event Action OnDie;
         public event Action<Vector3> OnDamageHit;
 
         private List<IState> _states;
         private IState _currentState;
-        private float _damage = 1;
+        private PlayerMoveSettings _playerMoveSettings;
 
         public void Construct(PlayerMoveSettings moveSettings, HealthSettings playerHealthSettings,
             IPlayerInput inputService, ICameraRaycaster cameraRaycaster)
         {
             _playerHealth = GetComponent<IHealth>();
             _progress = new PlayerProgress();
-
+            _playerMoveSettings = moveSettings;
+            
             _states = new List<IState>
             {
-                new PlayerAttackState(_playerAnimator, this, this),
+                new PlayerAttackState(_playerAnimator, this, this, moveSettings.AttackDelay),
                 new PlayerDieState(this),
                 new PlayerHitState(_playerHealth, Progress, this),
                 new PlayerIdleState()
@@ -58,7 +59,7 @@ namespace Game.CodeBase.PlayerLogic
             _inputService = inputService;
             _cameraRaycaster = cameraRaycaster;
             _playerHealth.Current = playerHealthSettings.MaxHealth;
-            _playerHealth.HealthChanged += CheckForDie;
+            _playerHealth.OnDie += SwitchState<PlayerDieState>;
             _playerTrigger.OnPlayerHit += _ => SwitchState<PlayerHitState>();
 
             _weaponTrigger.OnDamageHit += HitDamage;
@@ -68,7 +69,7 @@ namespace Game.CodeBase.PlayerLogic
 
         private void OnDestroy()
         {
-            _playerHealth.HealthChanged -= CheckForDie;
+            _playerHealth.HealthChanged -= SwitchState<PlayerDieState>;
             _playerTrigger.OnPlayerHit -= _ => SwitchState<PlayerHitState>();
             _weaponTrigger.OnDamageHit -= HitDamage;
             DisableInput();
@@ -89,24 +90,15 @@ namespace Game.CodeBase.PlayerLogic
         {
         }
 
-        private void HitDamage(IHealth damageable, Vector3 position)
+        private void HitDamage(IDamageable damageable, Vector3 position)
         {
             if (_currentState.GetType() == typeof(PlayerAttackState))
             {
                 OnDamageHit?.Invoke(position);
-                damageable.TakeDamage(_damage);
+                damageable.TakeDamage(_playerMoveSettings.Damage);
             }
         }
-
-        private void CheckForDie()
-        {
-            if (_playerHealth.Current <= 0)
-            {
-                OnDie?.Invoke();
-                SwitchState<PlayerDieState>();
-            }
-        }
-
+        
         private void EnableInput()
         {
             _inputService.OnMove += _playerMove.Move;

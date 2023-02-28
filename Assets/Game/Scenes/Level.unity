@@ -177,7 +177,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 428174, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1
+      value: -1.43
       objectReference: {fileID: 0}
     - target: {fileID: 428174, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -210,6 +210,30 @@ PrefabInstance:
     - target: {fileID: 428174, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 19809666, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19809666, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19830714, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19830714, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19849970, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
+      propertyPath: InitialModule.startSizeY.minMaxState
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 19849970, guid: 32ee209eef9352544a1e63a4e2c52c8d, type: 3}
+      propertyPath: InitialModule.startSizeZ.minMaxState
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

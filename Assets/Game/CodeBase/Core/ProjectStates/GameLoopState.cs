@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Game.CodeBase.CameraLogic;
-using Game.CodeBase.Core.Services.AssetProvider;
 using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Core.States;
 using Game.CodeBase.Level;
@@ -36,7 +35,7 @@ namespace Game.CodeBase.Core.ProjectStates
             _particleFactory = ServiceLocator.ResolveService<ParticleFactory>();
             _payloadData = payload;
             _player = payload.Player;
-            _player.OnDie += EnterGameOverState;
+            _player.PlayerHealth.OnDie += EnterGameOverState;
             _player.OnDamageHit += CreateHitParticle;
             _inputService = ServiceLocator.ResolveService<IPlayerInput>();
             _inputService.OnShowInventory += LoadInventoryState;
@@ -46,7 +45,7 @@ namespace Game.CodeBase.Core.ProjectStates
 
         public void Exit()
         {
-            _player.OnDie -= EnterGameOverState;
+            _player.PlayerHealth.OnDie -= EnterGameOverState;
             _player.OnDamageHit += CreateHitParticle;
             _inputService.OnShowInventory -= LoadInventoryState;
             foreach (var item in _items)

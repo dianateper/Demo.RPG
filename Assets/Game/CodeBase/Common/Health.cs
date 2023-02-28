@@ -9,14 +9,13 @@ namespace Game.CodeBase.Common
         private float _currentHealth;
         private float _maxHealth;
 
-        public Health()
-        {
-        }
-
         public Health(float current)
         {
             Current = current;
+            HealthChanged += CheckForDie;
         }
+
+        public event Action OnDie;
 
         public float Current
         {
@@ -25,6 +24,7 @@ namespace Game.CodeBase.Common
             {
                 if (value <= 0)
                     value = 0;
+                
                 _currentHealth = value;
             }
         }
@@ -37,10 +37,16 @@ namespace Game.CodeBase.Common
             HealthChanged?.Invoke();
         }
 
-        public void Construct(IHealthSettings playerHealthSettings)
+        public void Construct(IHealthSettings healthSettings)
         {
-            _maxHealth = playerHealthSettings.MaxHealth;
+            _maxHealth = healthSettings.MaxHealth;
             _currentHealth = _maxHealth;
+        }
+        
+        private void CheckForDie()
+        {
+            if (_currentHealth <= 0) 
+                OnDie?.Invoke();
         }
     }
 }

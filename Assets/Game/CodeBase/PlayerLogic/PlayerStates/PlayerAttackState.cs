@@ -9,12 +9,14 @@ namespace Game.CodeBase.PlayerLogic.PlayerStates
         private readonly PlayerAnimator _playerAnimator;
         private readonly MonoBehaviour _monoBehaviour;
         private readonly IStateSwitcher _stateSwitcher;
+        private readonly WaitForSeconds _attackDelay; 
 
-        public PlayerAttackState(PlayerAnimator playerAnimator, MonoBehaviour monoBehaviour, IStateSwitcher stateSwitcher)
+        public PlayerAttackState(PlayerAnimator playerAnimator, MonoBehaviour monoBehaviour, IStateSwitcher stateSwitcher, float attackDelay)
         {
             _playerAnimator = playerAnimator;
             _monoBehaviour = monoBehaviour;
             _stateSwitcher = stateSwitcher;
+            _attackDelay = new WaitForSeconds(attackDelay);
         }
 
         public void Enter()
@@ -25,7 +27,7 @@ namespace Game.CodeBase.PlayerLogic.PlayerStates
 
         private IEnumerator EnterIdleState()
         {
-            yield return new WaitForSeconds(3);
+            yield return _attackDelay;
             _stateSwitcher.SwitchState<PlayerIdleState>();
         }
 

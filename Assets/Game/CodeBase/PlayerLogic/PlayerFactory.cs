@@ -17,8 +17,7 @@ namespace Game.CodeBase.PlayerLogic
         [SerializeField] private PlayerMoveSettings _moveSettings;
         [SerializeField] private PlayerSpawnSettings _spawnSettings;
         [SerializeField] private HealthSettings _healthSettings;
-        [SerializeField] private GameObject _spawnRing;
-       
+
         public IPlayer CreatePlayer(IPlayerInput inputService, Vector3 at,
             ICameraRaycaster cameraRaycaster = null,
             List<IEnemy> enemies = null)
@@ -38,8 +37,12 @@ namespace Game.CodeBase.PlayerLogic
     public class PlayerMoveSettings
     {
         [SerializeField] private float _speed;
+        [SerializeField] private float _attackDelay;
+        [SerializeField] private float _damage;
 
         public float Speed => _speed;
+        public float AttackDelay => _attackDelay;
+        public float Damage => _damage;
     }
     
     [Serializable]

@@ -21,6 +21,7 @@ MonoBehaviour:
       _idleTime: 2
       _stopDistance: 0.2
       _destroyDelay: 3
+      _damage: 1
     _offsetY: 23
     _healthSettings:
       _maxHealth: 5

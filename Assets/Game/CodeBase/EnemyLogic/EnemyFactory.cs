@@ -87,11 +87,13 @@ namespace Game.CodeBase.EnemyLogic
         [SerializeField] private float _idleTime;
         [SerializeField] private float _stopDistance;
         [SerializeField] private float _destroyDelay;
+        [SerializeField] private float _damage;
 
         public float AttackDistance => _attackDistance;
         public float ChaseDistance => _chaseDistance;
         public float IdleTime => _idleTime;
         public float StopDistance => _stopDistance;
         public float DestroyDelay => _destroyDelay;
+        public float Damage => _damage;
     }
 }

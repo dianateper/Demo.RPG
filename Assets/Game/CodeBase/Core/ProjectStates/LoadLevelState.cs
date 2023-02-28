@@ -122,7 +122,7 @@ namespace Game.CodeBase.Core.ProjectStates
         private void CreatePlayer()
         {
             _player = _levelInstaller.CreatePlayer(_playerInput, _enemies, _raycaster);
-            _player.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
+            _player.PlayerHealth.OnDie += () => _updateableHandler.RemoveFromUpdatable(_player);
         }
 
         private void EnterGameLoopState()

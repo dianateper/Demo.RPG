@@ -3,11 +3,11 @@ using Game.CodeBase.PlayerLogic;
 
 namespace Game.CodeBase.Common
 {
-    public interface IHealth
+    public interface IHealth : IDamageable
     {
         event Action HealthChanged;
+        event Action OnDie;
         float Current { get; set; }
-        void TakeDamage(float damageTaken);
-        void Construct(IHealthSettings playerHealthSettings);
+        void Construct(IHealthSettings healthSettings);
     }
 }
