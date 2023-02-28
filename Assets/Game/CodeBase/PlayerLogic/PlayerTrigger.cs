@@ -6,13 +6,13 @@ namespace Game.CodeBase.PlayerLogic
 {
     public class PlayerTrigger : MonoBehaviour
     {
-        public event Action<float> OnPlayerHit;
+        public event Action<IDamager> OnPlayerHit;
 
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent(out IDamager damager))
             {
-                OnPlayerHit?.Invoke(damager.Damage);
+                OnPlayerHit?.Invoke(damager);
             }
         }
     }

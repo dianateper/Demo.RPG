@@ -16,11 +16,11 @@ namespace Game.CodeBase.PlayerLogic
         private const float GroundOffset = 0.2f;
         private const int MaxColliders = 1;
 
-        public void Construct(PlayerMoveSettings moveSettings, PlayerAnimator playerAnimator)
+        public void Construct(PlayerSettings settings, PlayerAnimator playerAnimator)
         {
             _walkableColliders = new Collider[MaxColliders];
             _character = GetComponent<CharacterController>();
-            _speed = moveSettings.Speed;
+            _speed = settings.Speed;
             _playerAnimator = playerAnimator;
         }
 

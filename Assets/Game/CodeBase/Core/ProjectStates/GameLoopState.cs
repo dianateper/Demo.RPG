@@ -36,7 +36,6 @@ namespace Game.CodeBase.Core.ProjectStates
             _payloadData = payload;
             _player = payload.Player;
             _player.PlayerHealth.OnDie += EnterGameOverState;
-            _player.OnDamageHit += CreateHitParticle;
             _inputService = ServiceLocator.ResolveService<IPlayerInput>();
             _inputService.OnShowInventory += LoadInventoryState;
             _inputService.IsEnabled = true;
@@ -46,7 +45,6 @@ namespace Game.CodeBase.Core.ProjectStates
         public void Exit()
         {
             _player.PlayerHealth.OnDie -= EnterGameOverState;
-            _player.OnDamageHit += CreateHitParticle;
             _inputService.OnShowInventory -= LoadInventoryState;
             foreach (var item in _items)
                 item.OnWorldItemIteract -= ShowItemDescription;

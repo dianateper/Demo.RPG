@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Game.CodeBase.CameraLogic;
 using Game.CodeBase.Common;
+using Game.CodeBase.Core;
 using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.Core.States;
 using Game.CodeBase.Inventory;
+using Game.CodeBase.Level.ParticleSystem;
 using Game.CodeBase.PlayerLogic.PlayerData;
 using Game.CodeBase.PlayerLogic.PlayerStates;
 using UnityEngine;
@@ -27,42 +28,42 @@ namespace Game.CodeBase.PlayerLogic
         private IInventory _inventory;
         private IPlayerInput _inputService;
         private ICameraRaycaster _cameraRaycaster;
+        private List<IState> _states;
+        private IState _currentState;
+        private PlayerSettings _playerSettings;
+        private ParticleFactory _particleFactory;
 
         public IPlayerProgress Progress => _progress;
         public IHealth PlayerHealth => _playerHealth;
         public Transform Transform => transform;
-        public event Action<Vector3> OnDamageHit;
-
-        private List<IState> _states;
-        private IState _currentState;
-        private PlayerMoveSettings _playerMoveSettings;
-
-        public void Construct(PlayerMoveSettings moveSettings, HealthSettings playerHealthSettings,
+        
+        public void Construct(PlayerSettings settings, HealthSettings playerHealthSettings,
             IPlayerInput inputService, ICameraRaycaster cameraRaycaster)
         {
+            _particleFactory = ServiceLocator.ResolveService<ParticleFactory>();
             _playerHealth = GetComponent<IHealth>();
             _progress = new PlayerProgress();
-            _playerMoveSettings = moveSettings;
-            
+            _playerSettings = settings;
+            _inputService = inputService;
+            _cameraRaycaster = cameraRaycaster;
+
             _states = new List<IState>
             {
-                new PlayerAttackState(_playerAnimator, this, this, moveSettings.AttackDelay),
+                new PlayerAttackState(_playerAnimator, this, this, _playerSettings, _particleFactory, _weaponTrigger),
                 new PlayerDieState(this),
                 new PlayerHitState(_playerHealth, Progress, this),
                 new PlayerIdleState()
             };
 
             _playerAnimator.Construct();
-            _playerMove.Construct(moveSettings, _playerAnimator);
+            _playerMove.Construct(settings, _playerAnimator);
             _progress.HealthData.CurrentHealth = _playerHealth.Current;
             _progress.KillData.EnemiesKilled = 0;
-            _inputService = inputService;
-            _cameraRaycaster = cameraRaycaster;
             _playerHealth.Current = playerHealthSettings.MaxHealth;
+            
             _playerHealth.OnDie += SwitchState<PlayerDieState>;
             _playerTrigger.OnPlayerHit += _ => SwitchState<PlayerHitState>();
-
-            _weaponTrigger.OnDamageHit += HitDamage;
+            
             EnableInput();
             SwitchState<PlayerIdleState>();
         }
@@ -71,7 +72,6 @@ namespace Game.CodeBase.PlayerLogic
         {
             _playerHealth.HealthChanged -= SwitchState<PlayerDieState>;
             _playerTrigger.OnPlayerHit -= _ => SwitchState<PlayerHitState>();
-            _weaponTrigger.OnDamageHit -= HitDamage;
             DisableInput();
         }
 
@@ -88,15 +88,6 @@ namespace Game.CodeBase.PlayerLogic
 
         public void ApplyInventoryItem(ItemType itemId)
         {
-        }
-
-        private void HitDamage(IDamageable damageable, Vector3 position)
-        {
-            if (_currentState.GetType() == typeof(PlayerAttackState))
-            {
-                OnDamageHit?.Invoke(position);
-                damageable.TakeDamage(_playerMoveSettings.Damage);
-            }
         }
         
         private void EnableInput()

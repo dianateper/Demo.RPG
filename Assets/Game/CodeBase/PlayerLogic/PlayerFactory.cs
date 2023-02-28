@@ -7,6 +7,7 @@ using Game.CodeBase.Core.Services.InputService;
 using Game.CodeBase.EnemyLogic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game.CodeBase.PlayerLogic
 {
@@ -14,7 +15,7 @@ namespace Game.CodeBase.PlayerLogic
     public class PlayerFactory : ScriptableObject, IService
     {
         [SerializeField] private Player _prefab;
-        [SerializeField] private PlayerMoveSettings _moveSettings;
+        [FormerlySerializedAs("_moveSettings")] [SerializeField] private PlayerSettings settings;
         [SerializeField] private PlayerSpawnSettings _spawnSettings;
         [SerializeField] private HealthSettings _healthSettings;
 
@@ -24,7 +25,7 @@ namespace Game.CodeBase.PlayerLogic
         {
             at += Vector3.up * _spawnSettings.OffsetY;
             var player = Instantiate(_prefab, at, quaternion.identity);
-            player.Construct(_moveSettings,_healthSettings, inputService, cameraRaycaster);
+            player.Construct(settings,_healthSettings, inputService, cameraRaycaster);
             if (enemies != null)
                 foreach (var enemy in enemies)
                     enemy.OnDie += _ => player.Kill();
@@ -34,7 +35,7 @@ namespace Game.CodeBase.PlayerLogic
     }
 
     [Serializable]
-    public class PlayerMoveSettings
+    public class PlayerSettings
     {
         [SerializeField] private float _speed;
         [SerializeField] private float _attackDelay;

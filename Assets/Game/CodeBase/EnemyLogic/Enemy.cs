@@ -53,7 +53,7 @@ namespace Game.CodeBase.EnemyLogic
             };
 
             _enemyHealth.Construct(enemyDataHealthSettings);
-            _enemyHealth.HealthChanged += CheckForDie;
+            _enemyHealth.OnDie += Die;
             SwitchState<EnemyIdleState>();
         }
 
@@ -72,14 +72,11 @@ namespace Game.CodeBase.EnemyLogic
             _currentState?.Enter();
         }
 
-        private void CheckForDie()
+        private void Die()
         {
-            if (_enemyHealth.Current <= 0)
-            {
-                _enemyHealth.HealthChanged -= CheckForDie;
-                SwitchState<EnemyDieState>();
-                OnDie?.Invoke(this);
-            }
+            _enemyHealth.OnDie -= Die;
+            SwitchState<EnemyDieState>();
+            OnDie?.Invoke(this);
         }
     }
 }
