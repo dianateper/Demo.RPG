@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Game.CodeBase.PlayerLogic.AnimationsBehaviour
+namespace Game.CodeBase.Common.AnimationsBehaviour
 {
     public class DelayedBehaviour : StateMachineBehaviour
     {

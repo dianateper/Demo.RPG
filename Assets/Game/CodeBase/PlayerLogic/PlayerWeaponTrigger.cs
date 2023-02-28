@@ -6,16 +6,13 @@ namespace Game.CodeBase.PlayerLogic
 {
     public class PlayerWeaponTrigger : MonoBehaviour
     {
-        [SerializeField] private float _damage = 1;
+        public event Action<IHealth, Vector3> OnDamageHit;
 
-        public event Action<Vector3> OnDamageHit;
-        
         private void OnTriggerEnter(Collider other)
         {
             if (other.TryGetComponent(out IHealth damageable))
             {
-                damageable.TakeDamage(_damage);
-                OnDamageHit?.Invoke(transform.position);
+                OnDamageHit?.Invoke(damageable, transform.position);
             }
         }
     }

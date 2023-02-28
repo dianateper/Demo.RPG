@@ -1,16 +1,20 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Game.CodeBase.CameraLogic;
 using Game.CodeBase.Common;
 using Game.CodeBase.Core.Services.InputService;
+using Game.CodeBase.Core.States;
 using Game.CodeBase.Inventory;
 using Game.CodeBase.PlayerLogic.PlayerData;
+using Game.CodeBase.PlayerLogic.PlayerStates;
 using UnityEngine;
 
 namespace Game.CodeBase.PlayerLogic
 {
     [RequireComponent(typeof(PlayerMove))]
     [RequireComponent(typeof(PlayerTrigger))]
-    public class Player : MonoBehaviour, IPlayer
+    public class Player : MonoBehaviour, IPlayer, IStateSwitcher
     {
         [SerializeField] private PlayerMove _playerMove;
         [SerializeField] private PlayerTrigger _playerTrigger;
@@ -23,55 +27,58 @@ namespace Game.CodeBase.PlayerLogic
         private IInventory _inventory;
         private IPlayerInput _inputService;
         private ICameraRaycaster _cameraRaycaster;
-        
+
         public IPlayerProgress Progress => _progress;
         public Transform Transform => transform;
         public event Action OnDie;
         public event Action<Vector3> OnDamageHit;
 
+        private List<IState> _states;
+        private IState _currentState;
+        private float _damage = 1;
+
         public void Construct(PlayerMoveSettings moveSettings, HealthSettings playerHealthSettings,
             IPlayerInput inputService, ICameraRaycaster cameraRaycaster)
         {
             _playerHealth = GetComponent<IHealth>();
+            _progress = new PlayerProgress();
+
+            _states = new List<IState>
+            {
+                new PlayerAttackState(_playerAnimator, this, this),
+                new PlayerDieState(this),
+                new PlayerHitState(_playerHealth, Progress, this),
+                new PlayerIdleState()
+            };
+
             _playerAnimator.Construct();
             _playerMove.Construct(moveSettings, _playerAnimator);
-            _playerHealth.Current = playerHealthSettings.MaxHealth;
-            _progress = new PlayerProgress();
             _progress.HealthData.CurrentHealth = _playerHealth.Current;
             _progress.KillData.EnemiesKilled = 0;
             _inputService = inputService;
             _cameraRaycaster = cameraRaycaster;
+            _playerHealth.Current = playerHealthSettings.MaxHealth;
             _playerHealth.HealthChanged += CheckForDie;
-            _playerHealth.HealthChanged += UpdateHealthData;
-            _playerTrigger.OnPlayerHit += TakeDamage;
-            _weaponTrigger.OnDamageHit += pos =>  OnDamageHit?.Invoke(pos);
+            _playerTrigger.OnPlayerHit += _ => SwitchState<PlayerHitState>();
+
+            _weaponTrigger.OnDamageHit += HitDamage;
             EnableInput();
+            SwitchState<PlayerIdleState>();
         }
 
         private void OnDestroy()
         {
             _playerHealth.HealthChanged -= CheckForDie;
-            _playerTrigger.OnPlayerHit -= TakeDamage;
-            _playerHealth.HealthChanged -= UpdateHealthData;
-            _weaponTrigger.OnDamageHit -= pos =>  OnDamageHit?.Invoke(pos);
+            _playerTrigger.OnPlayerHit -= _ => SwitchState<PlayerHitState>();
+            _weaponTrigger.OnDamageHit -= HitDamage;
             DisableInput();
         }
 
-        private void UpdateHealthData() => 
-            Progress.HealthData.CurrentHealth = _playerHealth.Current;
-
-        private void TakeDamage(float damage) => _playerHealth.TakeDamage(damage);
-
-        private void CheckForDie()
+        public void SwitchState<T>() where T : class, IState
         {
-            if (_playerHealth.Current <= 0) 
-                DestroyPlayer();
-        }
-
-        private void DestroyPlayer()
-        {
-            OnDie?.Invoke();
-            Destroy(gameObject);
+            _currentState?.Exit();
+            _currentState = _states.FirstOrDefault(s => s.GetType() == typeof(T));
+            _currentState?.Enter();
         }
 
         public void OnUpdate(float deltaTime) => _playerWeaponRig.OnUpdate();
@@ -82,17 +89,35 @@ namespace Game.CodeBase.PlayerLogic
         {
         }
 
+        private void HitDamage(IHealth damageable, Vector3 position)
+        {
+            if (_currentState.GetType() == typeof(PlayerAttackState))
+            {
+                OnDamageHit?.Invoke(position);
+                damageable.TakeDamage(_damage);
+            }
+        }
+
+        private void CheckForDie()
+        {
+            if (_playerHealth.Current <= 0)
+            {
+                OnDie?.Invoke();
+                SwitchState<PlayerDieState>();
+            }
+        }
+
         private void EnableInput()
         {
             _inputService.OnMove += _playerMove.Move;
-            _inputService.OnAttack += _playerAnimator.SetAttackTrigger;
+            _inputService.OnAttack += SwitchState<PlayerAttackState>;
             _cameraRaycaster?.Initialize();
         }
 
         private void DisableInput()
         {
             _inputService.OnMove -= _playerMove.Move;
-            _inputService.OnAttack -= _playerAnimator.SetAttackTrigger;
+            _inputService.OnAttack -=  SwitchState<PlayerAttackState>;
             _cameraRaycaster?.DeInitialize();
         }
     }
